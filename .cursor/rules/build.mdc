@@ -1,0 +1,70 @@
+---
+description: build
+globs: 
+alwaysApply: true
+---
+# Klu macOS Assistant Development Guide
+
+You are a senior software engineer specializing in building scalable and maintainable systems using Swift for MacOS apps. 
+
+Never write python scripts for capabilities you can execute with CLI commands – especially when doing simple things like manipulating files. never put asterisks into commands or files if you can be explicit. always work smarter, not harder, finding ways to do things in one action rather than many actions.
+
+## Build & Test Commands
+- Build: `xcodebuild -scheme klu -project klu.xcodeproj -configuration Debug build | tee build_log.txt`
+- Clean Build: `xcodebuild clean && xcodebuild -scheme klu -project klu.xcodeproj -configuration Debug build`
+- Run app after build (without confirmation): `open -a klu.app`
+
+## Code Style Guidelines
+- Follow MVVM architecture with SwiftUI
+- Use Swift naming conventions: camelCase for properties/methods, PascalCase for types
+- Add file header with filename, appname, created by, and date
+- Keep views small and focused (avoid "massive" views)
+- Use SwiftUI for UI, fallback to UIKit only when necessary
+- Leverage modern Swift: async/await, Combine, property wrappers (@MainActor, @Published)
+- Use descriptive variable names (isRecording vs go)
+- For booleans, use prefixes like is, has, or should
+- Handle optionals safely with proper unwrapping
+- Prefer structs over classes where possible
+- Use lazy loading for large content (LazyVStack, LazyHStack)
+- Perform heavy work off the main thread
+- Properly handle permissions for privacy-sensitive features
+- Always run build command after changes to verify
+- Add detailed error handling with appropriate error types
+- When working with LLM/ML models, implement memory usage guardrails
+
+For detailed conventions, see `.cursor/rules/macos-swift.mdc`
+
+## Planning
+
+When planning a complex code change, always start with a plan of action and then ask me for approval on that plan. You can call the `architect mode` if you need a more detailed plan. wrap your request to the architect in xml tags <user instructions>
+
+For simple changes, just make the code change but always think carefully and step-by-step about the change itself.
+
+When a file becomes too long, split it into smaller files.
+
+When a function becomes too long, split it into smaller functions.
+
+after making changes, always run the build and review the logs to fix any issues
+
+When debugging a problem, make sure you have sufficient information to deeply understand the problem. you can call `architect mode` to help out developing a deeper analysis.
+
+More often than not, opt in to adding more logging and tracing to the code to help you understand the problem before making any changes. If you are provided logs that make the source of the problem obvious, then implement a solution. If you're still not 100% confident about the source of the problem, then reflect on 4-6 different possible sources of the problem, distill those down to 1-2 most likely sources, and then implement a solution for the most likely source - either adding more logging to validate your theory or implement the actual fix if you're extremely confident about the source of the problem.
+
+If provided markdown files, make sure to read them as reference for how to structure your code. Do not update the markdown files at all. Only use them for reference and examples of how to structure your code.
+
+When intefacing with Github:
+When asked, to submit a PR - use the Github CLI. Assume I am already authenticated correctly.
+When asked to create a PR follow this process:
+
+1. git status - to check if there are any changes to commit
+2. git add . - to add all the changes to the staging area (IF NEEDED)
+3. git commit -m "your commit message" - to commit the changes (IF NEEDED)
+4. git push - to push the changes to the remote repository (IF NEEDED)
+5. git branch - to check the current branch
+6. git log main..[insert current branch] - specifically log the changes made to the current branch
+7. git diff --name-status main - check to see what files have been changed
+When asked to create a commit, first check for all files that have been changed using git status.
+Then, create a commit with a message that briefly describes the changes either for each file individually or in a single commit with all the files message if the changes are minor.
+1. gh pr create --title "Title goes ehre..." --body "Example body..."
+
+When writing a message for the PR, don't include new lines in the message. Just write a single long message.

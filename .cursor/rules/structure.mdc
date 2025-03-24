@@ -1,0 +1,184 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+# Project Structure
+
+```
+.
+├── .cursor
+│   └── rules
+│       ├── agent.mdc
+│       ├── architect.mdc
+│       ├── build.mdc
+│       ├── claude-code.prompt.md
+│       ├── cursor.prompt.md
+│       ├── debug.mdc
+│       ├── macos-swift.mdc
+│       ├── plan.mdc
+│       └── structure.mdc
+├── .gitignore
+├── .scripts
+│   └── structure.sh
+├── CLAUDE.md
+├── LoginItemHelper
+│   ├── Assets.xcassets
+│   │   ├── AccentColor.colorset
+│   │   │   └── Contents.json
+│   │   ├── AppIcon.appiconset
+│   │   │   ├── Contents.json
+│   │   │   ├── Icon-macOS-128x128@1x.png
+│   │   │   ├── Icon-macOS-128x128@2x.png
+│   │   │   ├── Icon-macOS-16x16@1x.png
+│   │   │   ├── Icon-macOS-16x16@2x.png
+│   │   │   ├── Icon-macOS-256x256@1x.png
+│   │   │   ├── Icon-macOS-256x256@2x.png
+│   │   │   ├── Icon-macOS-32x32@1x.png
+│   │   │   ├── Icon-macOS-32x32@2x.png
+│   │   │   ├── Icon-macOS-512x512@1x.png
+│   │   │   └── Icon-macOS-512x512@2x.png
+│   │   ├── Contents.json
+│   │   └── MenuBarIcon.imageset
+│   │       ├── Contents.json
+│   │       ├── klu-spark-white 1.svg
+│   │       ├── klu-spark-white.svg
+│   │       └── klu-spark.svg
+│   ├── Info.plist
+│   ├── LoginItemHelper.entitlements
+│   ├── Main.swift
+│   └── Preview Content
+│       └── Preview Assets.xcassets
+│           └── Contents.json
+├── README.md
+├── docs
+│   ├── Embedders
+│   │   └── README.md
+│   ├── KeyboardShortcuts
+│   │   └── readme.md
+│   ├── MLXLLM.docc
+│   │   ├── Documentation.md
+│   │   ├── README.md
+│   │   ├── adding-model.md
+│   │   └── using-model.md
+│   ├── MLXLMCommon.docc
+│   │   └── README.md
+│   └── MLXVLM.docc
+│       └── README.md
+├── klu
+│   ├── App.entitlements
+│   ├── AppDelegate.swift
+│   ├── AppState.swift
+│   ├── Assets.xcassets
+│   │   ├── AccentColor.colorset
+│   │   │   └── Contents.json
+│   │   ├── AppIcon.appiconset
+│   │   │   ├── Contents.json
+│   │   │   ├── Icon-macOS-128x128@1x.png
+│   │   │   ├── Icon-macOS-128x128@2x.png
+│   │   │   ├── Icon-macOS-16x16@1x.png
+│   │   │   ├── Icon-macOS-16x16@2x.png
+│   │   │   ├── Icon-macOS-256x256@1x.png
+│   │   │   ├── Icon-macOS-256x256@2x.png
+│   │   │   ├── Icon-macOS-32x32@1x.png
+│   │   │   ├── Icon-macOS-32x32@2x.png
+│   │   │   ├── Icon-macOS-512x512@1x.png
+│   │   │   └── Icon-macOS-512x512@2x.png
+│   │   ├── Contents.json
+│   │   └── MenuBarIcon.imageset
+│   │       ├── Contents.json
+│   │       ├── klu-spark-white 1.svg
+│   │       ├── klu-spark-white.svg
+│   │       └── klu-spark.svg
+│   ├── Info.plist
+│   ├── Logic
+│   │   ├── AppSettings.swift
+│   │   ├── Browsing
+│   │   │   ├── blacklist.plist
+│   │   │   └── whitelist.plist
+│   │   ├── Chat
+│   │   │   ├── ChatViewModel.swift
+│   │   │   ├── Message.swift
+│   │   │   └── ThreadManager.swift
+│   │   ├── LLM
+│   │   │   ├── Config.swift
+│   │   │   ├── FunctionCalls.swift
+│   │   │   └── Run.swift
+│   │   ├── Models
+│   │   │   ├── Audio.swift
+│   │   │   ├── Core.swift
+│   │   │   ├── Embedding.swift
+│   │   │   ├── Model.swift
+│   │   │   ├── ModelRegistry.swift
+│   │   │   ├── Reasoning.swift
+│   │   │   └── Vision.swift
+│   │   ├── OnboardingManager.swift
+│   │   ├── PermissionManager.swift
+│   │   ├── Preferences
+│   │   │   ├── DockVisibilityManager.swift
+│   │   │   ├── LaunchAtLoginManager.swift
+│   │   │   └── PreferenceSection.swift
+│   │   ├── Shortcuts.swift
+│   │   ├── WindowAccessor.swift
+│   │   └── WindowManager.swift
+│   ├── Preview Content
+│   │   └── Preview Assets.xcassets
+│   │       └── Contents.json
+│   ├── Resources
+│   │   ├── Original.png
+│   │   └── iconHelper.bash
+│   ├── Views
+│   │   ├── AssistantView.swift
+│   │   ├── Chat
+│   │   │   ├── Chat.swift
+│   │   │   ├── FloatingChat.swift
+│   │   │   ├── MarkdownView.swift
+│   │   │   ├── MessageBubble.swift
+│   │   │   └── ThreadsSidebar.swift
+│   │   ├── MenuBar.swift
+│   │   ├── Onboarding
+│   │   │   ├── Onboarding.swift
+│   │   │   └── Steps
+│   │   │       ├── Finished.swift
+│   │   │       ├── ModelSelection.swift
+│   │   │       ├── Permissions.swift
+│   │   │       ├── Preference.swift
+│   │   │       ├── UITour.swift
+│   │   │       └── Welcome.swift
+│   │   └── Preferences
+│   │       ├── KeyboardShortcutRecorder.swift
+│   │       ├── Preferences.swift
+│   │       └── Sections
+│   │           ├── BrowsingPreferences.swift
+│   │           ├── CalendarPreferences.swift
+│   │           ├── ConnectionsPreferences.swift
+│   │           ├── EmailPreferences.swift
+│   │           ├── GeneralPreferences.swift
+│   │           ├── HardwarePreferences.swift
+│   │           ├── MessagesPreferences.swift
+│   │           ├── ModelsPreferences.swift
+│   │           ├── NotificationsPreferences.swift
+│   │           ├── PermissionsPreferences.swift
+│   │           └── UpdatesPreferences.swift
+│   ├── klu.entitlements
+│   └── kluApp.swift
+└── klu.xcodeproj
+    ├── project.pbxproj
+    ├── project.xcworkspace
+    │   ├── contents.xcworkspacedata
+    │   └── xcshareddata
+    │       ├── IDEWorkspaceChecks.plist
+    │       └── swiftpm
+    │           └── Package.resolved
+    ├── xcshareddata
+    │   └── xcschemes
+    │       └── klu.xcscheme
+    └── xcuserdata
+        └── stephenwalker.xcuserdatad
+            ├── xcdebugger
+            │   └── Breakpoints_v2.xcbkptlist
+            └── xcschemes
+                └── xcschememanagement.plist
+
+47 directories, 126 files
+```

@@ -1,0 +1,10 @@
+---
+description: Rules for the agent to follow
+globs: 
+alwaysApply: true
+---
+# Agent Instructions
+
+If you create a new file(s), pleas run the following command afterwards to update the project documentation.
+
+```bash ./.scripts/structure.sh```

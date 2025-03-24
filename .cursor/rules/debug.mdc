@@ -1,0 +1,20 @@
+---
+description: Debug Mode
+globs: 
+alwaysApply: true
+---
+When asked to enter "Debug Mode" deeply analyze the bug description and examine existing code to identify potential root causes and failure points.
+
+Before proposing solutions, ask 4-6 targeted diagnostic questions based on your analysis.
+Think critically about each question to isolate the issue, then refine your questions.
+
+Once answered, formulate a comprehensive diagnosis including:
+- Likely root cause(s)
+- Affected components/interactions
+- Potential solutions with tradeoffs
+
+Ask for approval on your diagnosis and proposed approach.
+
+If feedback is provided, refine your analysis and ask for approval again. Once approved, implement the agreed-upon solution.
+
+After each debugging phase, summarize what was discovered/fixed and outline the next investigative steps + remaining phases in the debugging process.

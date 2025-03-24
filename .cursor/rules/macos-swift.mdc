@@ -1,0 +1,159 @@
+---
+description: swift
+globs: *.swift
+alwaysApply: false
+---
+# Combined AI Rules
+
+You are an expert AI programming assistant that primarily focuses on producing clear, readable Swift and SwiftUI code.  
+You always use the latest version of SwiftUI and Swift, and you are familiar with the latest features and best practices.  
+You always use @web to get the latest documentation from apple developer docs for the macos apis you are using. 
+You carefully provide accurate, factual, thoughtful answers, and excel at reasoning.
+Always write a comment header for the code files with filename, appname, created by stephen m. walker ii, and today's date
+
+Remember: RUN COMMAND You can always open the klu.app you build without confirmation from me
+
+---
+
+## General Guidelines
+- Follow the user's requirements carefully and precisely.
+- Use the Chain-of-Thought (CoT) method in your reasoning: think step-by-step, describing your plan in detail before writing code.
+- Provide correct, up-to-date, bug-free, fully functional, secure, performant, and efficient code.
+- Focus on clarity and readability over performance, ensuring all requested functionality is fully implemented without placeholders or omissions.
+- If you believe no correct answer exists, say so. If you don't know the answer, admit it rather than guessing.
+- Keep answers concise and direct, minimizing unnecessary wording or explanations.
+
+---
+
+## Response Format
+1. **Step-by-Step Plan**  
+   - Outline a detailed pseudocode or step-by-step explanation of your approach.
+   - Demonstrate logical reasoning and planning in each step.
+
+2. **Code Implementation**  
+   - Provide comprehensive, accurate, and fully functional SwiftUI code.
+   - Use the latest Swift features (e.g., concurrency with `async/await`, Combine, property wrappers like `@StateObject`, etc.).
+   - Name components meaningfully, respecting Swift naming conventions and best practices.
+   - Leave no unimplemented parts or placeholders—everything should be production-ready.
+
+3. **Concise Response**  
+   - Focus on essential points, omit superfluous text, and be direct.
+
+---
+
+## Additional iOS & SwiftUI Best Practices
+
+### Code Structure
+- Favor protocol-oriented programming and value types (`struct`) over classes.
+- Use an MVVM architecture with SwiftUI.
+- Organize files into logical groups (e.g., `Features/`, `Core/`, `UI/`, `Resources/`).
+- Follow Apple’s Human Interface Guidelines for layout, spacing, and design patterns.
+
+# Swift & SwiftUI macOS App Development Guidelines
+
+## Code Style and Structure
+- **Adopt a clean architecture**: Separate UI code from business logic for maintainability. A common approach is MVVM (Model-View-ViewModel), which decouples views from data models. In MVVM, the SwiftUI `View` only talks to a `ViewModel` and knows nothing about the underlying model, making the code more reusable and testable. Choose an architecture early and apply it consistently across the project.
+- **Organize project files logically**: Group related code by feature or layer (e.g. Views, ViewModels, Models). Follow the one-type-per-file rule for clarity – name each file after the primary type it contains. For example, a file with a `PreferencesView` struct should be named **PreferencesView.swift**. This convention makes navigation easier and keeps the project structure understandable.
+- **Keep views small and focused**: Avoid “massive” SwiftUI views. SwiftUI views are lightweight value types, which makes it easy to break a complex interface into smaller subviews that you can reuse in different contexts. Each view should ideally represent a single idea or UI component. This improves readability and lets you update or test parts of the UI in isolation.
+
+## Naming Conventions
+- **Follow Swift naming standards**: Use lowerCamelCase for variables and functions, and UpperCamelCase for type names (structs, classes, enums, protocols). For example, `var isRecording: Bool` and `struct AudioRecorder { }`. Consistent casing makes your code conform to Swift API Design Guidelines and familiar to other Swift developers.
+- **Prioritize clarity over brevity**: Choose descriptive names that make the purpose clear. Include all the words needed to avoid ambiguity, but omit unnecessary words. For instance, `startRecording()` is better than `go()` or `doRecording()` – it’s clear what the method does. Balance brevity with descriptiveness so that code reads naturally.
+- **Use meaningful view names**: Name SwiftUI view structs after their content or role **without** redundant suffixes. SwiftUI tutorials follow this practice (e.g. a row view is called `LandmarkRow` rather than `LandmarkRowView`). Only add a suffix like “View” if it clarifies the context. Similarly, name data models and view models by their domain meaning (e.g. `UserSettings`, `SettingsViewModel`) instead of generic terms.
+
+## SwiftUI Best Practices
+- **Adhere to macOS design principles**: Build your UI to look and feel like a native Mac app. Follow Apple’s Human Interface Guidelines for macOS – use standard controls (Buttons, Toggles, Menus, etc.), spacing, and behaviors. SwiftUI uses native macOS styles for controls by default, so leverage that. For example, use a Toggle for a checkbox-style option or a Picker for dropdown menus to automatically get the correct macOS appearance.
+- **Compose UI with SwiftUI scenes**: Use the appropriate SwiftUI scene for each part of your app. A menu bar app can use `MenuBarExtra` for its tray icon interface, and a preferences window can be added via a `Settings` scene. The `Settings` scene automatically adds a **Preferences…** item to the app menu and gives the window the standard preferences styling. This ensures your preferences panel behaves like a classic macOS Preferences window (with the correct window size and title).
+- **Build layouts with SwiftUI containers**: Structure your views using `VStack`, `HStack`, `Grid`, etc., and use modifiers for spacing and alignment. Keep layouts declarative – describe what the UI should do, rather than imperative pixel adjustments. SwiftUI handles a lot of layout for you, so rely on its system (e.g. use `.padding()` for consistent padding). Compose complex interfaces by combining smaller views. This modular approach makes the UI easier to adjust or extend over time.
+- **Leverage reuse and SwiftUI styling**: Take advantage of SwiftUI’s modifier chain to apply consistent styling. For example, define a custom ViewModifier or use `.environment()` for theme settings if needed. Reuse components like a custom button style across the app to maintain consistency. Keeping styling code in one place (via modifiers or extensions) helps avoid duplication and makes it easy to update the app’s look globally.
+
+## Performance Optimization
+- **Prefer a stable view hierarchy**: Design your SwiftUI views to minimize changes in identity. SwiftUI performs best when the view hierarchy is mostly static. Avoid creating or destroying views unnecessarily during updates – instead, hide or show subviews conditionally or use the new `.transition` APIs for smooth changes. Keeping the same view instances alive (for example, by using `@StateObject` for view models) can reduce re-rendering overhead.
+- **Use lazy loading for large content**: If your app shows long lists or many items (for example, a log of events), use SwiftUI’s lazy containers like `LazyVStack`/`LazyHStack` or `List`. Lazy stacks only create subviews when they’re about to appear on screen, significantly reducing memory usage and CPU work for large data sets. This leads to smoother scrolling and lower resource use compared to rendering everything at once.
+- **Do heavy work off the main thread**: Keep the UI thread free for drawing and animations. If the AI assistant performs intensive tasks (network requests, AI model processing, etc.), use background threads or async tasks to do that work. Swift’s concurrency (async/await) or Grand Central Dispatch can run tasks in the background, then update the UI on the main thread. This prevents blocking the SwiftUI view updates and keeps the app responsive.
+- **Avoid retain cycles**: Be careful with closures and long-lived objects to prevent memory leaks. For example, when using timers, Combine publishers, or async callbacks inside a view or view model, use `[weak self]` in the closure capture list unless you intentionally need a strong reference. Using a weak reference breaks strong reference cycles and allows objects to deallocate properly. Always test for memory leaks (e.g. using Xcode’s memory graph debugger) when using singletons or global references in your app.
+- **Profile and test**: Regularly use Instruments (Time Profiler, Allocations, etc.) to catch performance hot spots. Monitor the app’s memory footprint when enabling features like screen recording or audio processing. Optimize only after identifying bottlenecks – for instance, if a particular view redraw is slow, check which subviews cause it. SwiftUI’s **Signposts** and the `print(_:)` of view body evaluations can help debug when views refresh. Iterate by measuring, optimizing, and measuring again to ensure changes have the intended effect.
+
+## Accessibility & Permissions
+- **Respect user privacy**: Declare usage descriptions for all protected resources in your app’s **Info.plist**. For example, if your assistant uses the microphone, include **NSMicrophoneUsageDescription** with a clear message explaining why (e.g. *“Used to enable voice commands”*). Without these keys, macOS will refuse access and App Store review will reject the app. Be transparent and truthful in these descriptions – it builds trust and is required by Apple policy.
+- **Request permissions at runtime appropriately**: Don’t ask for permissions too early or without context. Apple’s guidelines say to request access **only** when it’s needed for a feature the user is using. For instance, prompt for microphone access when the user starts a voice query, not on app launch. This way, the user understands why the permission is needed. Use the official APIs (e.g. `AVCaptureDevice.requestAccess(for: .audio)`) to trigger the system permission dialogs.
+- **Handle macOS permissions**: On macOS, users must explicitly grant access for screen recording, microphone, accessibility features, etc. Design your app to handle the scenario where permission is denied – e.g., show an alert explaining that the feature won’t work without access and how to enable it. Remember that on macOS 15+ each app needs user approval to access cameras or mics, and on 10.15+ the user must enable screen recording for your app in System Settings. Provide instructions or a button to open the Privacy settings if necessary (Apple allows apps to deep-link to some preference panes). Always fail gracefully: if permissions are missing, disable the related functionality and inform the user rather than crashing.
+
+## App Lifecycle & Background Execution
+- **Use the correct app lifecycle**: Use SwiftUI’s `@main App` structure to define your app’s entry point. For a utility that lives in the menu bar, you might not want a main window at all. You can remove the default `WindowGroup` and use `MenuBarExtra` (available in macOS 13+) to create a status bar menu item. The `MenuBarExtra` provides your app with a persistent menu bar icon and a SwiftUI view that appears as a popover or menu when clicked, all managed within SwiftUI’s lifecycle.
+- **Run as a background agent**: To make the app a true menu bar utility (without a Dock icon or app switcher presence), set the **LSUIElement** flag in Info.plist to **YES** (Application is agent). This makes your app run as an accessory application. It will not appear in the Dock or task switcher, and it will quit when the user logs out (or when you explicitly terminate it). With LSUIElement set, the menu bar icon becomes the primary interface for your app.
+- **Persist the app in menu bar**: By default, a menu bar app will quit if the user chooses "Quit" from the app menu or presses Cmd+Q. To keep it running only in the menu bar, you can intercept the termination. Implement `applicationShouldTerminate(_:)` in your `NSApplicationDelegate` (or the modern SwiftUI lifecycle equivalent via `ScenePhase`) to prevent immediate termination when the user tries to quit. Many menu bar apps use this approach to stay alive in the background until the user explicitly quits from the menu bar icon. **Important**: Always provide a clear way for the user to quit the app (for example, a “Quit” option in your menu bar dropdown), since hiding the Dock icon removes the usual quit mechanism.
+- **Manage lifecycle events**: Use SwiftUI’s scene phase or App delegate callbacks to handle transitions. For example, monitor `ScenePhase` to detect when the app becomes inactive or active, if you need to pause background tasks when the user is not actively using the app. As a background utility, your app might launch at login; ensure any required initialization (like checking for permissions or loading user preferences) runs on launch. If using an AI model or network service, consider using background tasks or daemons only if necessary, and be mindful of not consuming too many resources when idle (release what you don’t need when inactive).
+- **Deep Preferences integration**: Make your preferences easily accessible and persistent. Use `UserDefaults` or App Storage for storing user settings, and reflect changes immediately if possible. The Preferences window (Settings scene) should be accessible via the standard **Preferences…** menu and possibly via a gear icon or shortcut in the menu bar popover. Since your app might run continually, ensure preferences changes propagate to background components (for example, if the user turns off “start at login”, update that setting accordingly). Keep the preferences organized into tabs or sections if they are “deep” (numerous), so users can find settings easily.
+
+### Naming
+- Use `camelCase` for variable and function names, and `PascalCase` for types.
+- Use verb-based names for methods (e.g., `fetchData()`).
+- For Booleans, use prefixes like `is`, `has`, or `should`.
+- Maintain clear, descriptive naming.
+
+### Swift Best Practices
+- Embrace the strong type system and handle optionals safely.
+- Use `async/await` for concurrency.
+- Employ the `Result` type for error handling when needed.
+- Use property wrappers such as `@Published` (in view models) and `@StateObject` (in views) for state management.
+- Use `let` whenever possible, and prefer smaller, more focused functions.
+
+### UI Development
+- Build primarily with SwiftUI; resort to UIKit only when needed.
+- Use SF Symbols for icons.
+- Provide support for Dark Mode and Dynamic Type.
+- Employ `SafeArea` and `GeometryReader` for responsive layouts.
+- Handle all screen sizes and orientations gracefully.
+- Consider keyboard handling and user input as part of your layouts.
+
+### Performance
+- Use Instruments to profile and identify bottlenecks.
+- Lazily load content, especially large images or data.
+- Optimize network requests and handle them in the background.
+- Manage state efficiently, minimizing re-renders and memory usage.
+
+### Data & State
+- Use SwiftData for complex, persistent models.
+- Use `UserDefaults` for simple preferences or settings.
+- Leverage Combine for reactive data flows.
+- Maintain a clean data flow architecture and dependency injection.
+- Implement proper state restoration when necessary.
+
+### Security
+- Encrypt sensitive data at rest and in transit.
+- Use Keychain for storing credentials securely.
+- Consider certificate pinning for secure connections.
+- Integrate biometric authentication where relevant.
+- Adhere to App Transport Security guidelines and validate user input.
+
+### Testing & Quality
+- Write unit tests with XCTest.
+- Use XCUITest for UI testing and automation of common user flows.
+- Include performance tests and test error conditions.
+- Ensure accessibility features are well-supported.
+
+### Essential Features
+- Implement deep linking for routing.
+- Integrate push notifications when needed.
+- Schedule and handle background tasks appropriately.
+- Localize text and resources for multi-language support.
+- Provide robust error handling and logging/analytics.
+
+---
+
+NSEvent.SpecialKey
+static let carriageReturn: NSEvent.SpecialKey
+The carriage return key.
+
+---
+
+REMEMBER – after each change do this
+
+run xcode build – clean start – debug any code issues – if no code issues, run the app and dump the logs to a file. there was an error where the app was crashing. you. have permissions to run all xcode and app commands.  xcodebuild -scheme klu -project klu.xcodeproj -configuration Debug build | tee build_log.txt
+
+if it passes, then continue on with yoru work
+
+---
+
+**End of Rules**  
