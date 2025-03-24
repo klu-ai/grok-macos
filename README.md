@@ -36,7 +36,7 @@ Grok is a modern macOS AI assistant that seamlessly integrates with your system,
 - Interactive UI tour
 - Progress tracking and resume capability
 
-## Project Structure
+## Project Structure  
 
 ```
 app/
