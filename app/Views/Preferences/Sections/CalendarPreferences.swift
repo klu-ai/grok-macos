@@ -1,6 +1,6 @@
 //
 //  CalendarPreferences.swift
-//  klu macos assistant
+//  Grok macOS assistant
 //
 //  Created by Stephen M. Walker II on 2/12/25.
 //
@@ -84,9 +84,9 @@ struct CalendarPreferences: View {
         Form {
             Section {
                 Toggle("Enable Calendar Integration", isOn: $calendarEnabled)
-                    .help("Enable calendar features in Klu")
+                    .help("Enable calendar features in Grok")
             } footer: {
-                Text("Connect your calendar to manage events and schedule meetings directly from Klu.")
+                Text("Connect your calendar to manage events and schedule meetings directly from Grok.")
             }
             
             if calendarEnabled {

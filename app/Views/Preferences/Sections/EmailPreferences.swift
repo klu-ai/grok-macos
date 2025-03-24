@@ -1,6 +1,6 @@
 //
 //  EmailPreferences.swift
-//  klu macos assistant
+//  Grok macOS assistant
 //
 //  Created by Stephen M. Walker II on 2/12/25.
 //
@@ -66,9 +66,9 @@ struct EmailPreferences: View {
         Form {
             Section {
                 Toggle("Enable Email Integration", isOn: $emailEnabled)
-                    .help("Enable email features in Klu")
+                    .help("Enable email features in Grok")
             } footer: {
-                Text("Connect your email account to manage messages directly from Klu.")
+                Text("Connect your email account to manage messages directly from Grok.")
             }
             
             if emailEnabled {

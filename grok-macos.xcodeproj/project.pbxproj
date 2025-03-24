@@ -166,6 +166,7 @@
 		3695FCF82D919EF700FB7F00 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		3695FCF92D919EF700FB7F00 /* klu.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = klu.entitlements; sourceTree = "<group>"; };
 		3695FCFA2D919EF700FB7F00 /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
+		3695FCFB2D919EF700FB7F00 /* grok.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = grok.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */

@@ -1,6 +1,6 @@
 //
 //  GeneralPreferences.swift
-//  klu macos assistant
+//  Grok macOS assistant
 //
 //  Created by Stephen M. Walker II on 2/12/25.
 //
@@ -75,14 +75,14 @@ struct GeneralPreferences: View {
                 Section("Application") {
                     VStack(alignment: .leading) {
                         Toggle("Launch at login", isOn: $launchAtLogin)
-                        Text("Automatically start Klu when you log into your Mac")
+                        Text("Automatically start Grok when you log into your Mac")
                             .foregroundColor(.secondary)
                             .font(.caption)
                     }
                     
                     VStack(alignment: .leading) {
                         Toggle("New thread on app load", isOn: $newThreadOnLoad)
-                        Text("Start with a new chat thread each time you open Klu")
+                        Text("Start with a new chat thread each time you open Grok")
                             .foregroundColor(.secondary)
                             .font(.caption)
                     }
@@ -97,7 +97,7 @@ struct GeneralPreferences: View {
                             }
                         ))
                         .disabled(!showInDock)
-                        Text("Display Klu in the menu bar for quick access")
+                        Text("Display Grok in the menu bar for quick access")
                             .foregroundColor(.secondary)
                             .font(.caption)
                     }
@@ -114,7 +114,7 @@ struct GeneralPreferences: View {
                             }
                         ))
                         .disabled(!showInMenuBar)
-                        Text("Show Klu in the Dock")
+                        Text("Show Grok in the Dock")
                             .foregroundColor(.secondary)
                             .font(.caption)
                     }
@@ -122,7 +122,7 @@ struct GeneralPreferences: View {
                 Section("Keyboard Shortcuts") {
                     VStack(alignment: .leading) {
                         Toggle("Enable global shortcut", isOn: $useGlobalShortcut)
-                        Text("Use a keyboard shortcut to quickly access Klu from anywhere")
+                        Text("Use a keyboard shortcut to quickly access Grok from anywhere")
                                 .foregroundColor(.secondary)
                                 .font(.caption)
                     }
@@ -137,14 +137,14 @@ struct GeneralPreferences: View {
                                 Text(theme.rawValue).tag(theme)
                             }
                         }
-                        Text("Choose the appearance theme for Klu")
+                        Text("Choose the appearance theme for Grok")
                             .foregroundColor(.secondary)
                             .font(.caption)
                     }
                     
                     VStack(alignment: .leading) {
                         Toggle("Keep window always on top", isOn: $alwaysOnTop)
-                        Text("Keep the Klu window visible above other windows")
+                        Text("Keep the Grok window visible above other windows")
                             .foregroundColor(.secondary)
                             .font(.caption)
                     }

@@ -1,6 +1,6 @@
 //
 //  ConnectionsPreferences.swift
-//  klu macos assistant
+//  Grok macOS assistant
 //
 //  Created by Stephen M. Walker II on 2/12/25.
 //
@@ -61,7 +61,7 @@ struct ConnectionsPreferences: View {
     var body: some View {
         Form {
             Section {
-                Text("Connect your favorite services to enhance Klu's capabilities.")
+                Text("Connect your favorite services to enhance Grok's capabilities.")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
             }

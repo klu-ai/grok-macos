@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  klu macos assistant
+//  Grok macOS assistant
 //
 //  Created by Stephen M. Walker II on 02/12/25.
 //
@@ -113,8 +113,8 @@ public class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     public func applicationDidBecomeActive(_ notification: Notification) {
         // Check the key window's title to determine if it's the main window
         if let keyWindow = NSApp.keyWindow {
-            // Only activate if the key window is the main window ("Klu Assistant")
-            if keyWindow.title == "Klu Assistant" {
+            // Only activate if the key window is the main window ("Grok Assistant")
+            if keyWindow.title == "Grok Assistant" {
                 NSApplication.shared.activate(ignoringOtherApps: true)
             }
             // If the key window is the settings window (e.g., "Preferences" or untitled), do nothing

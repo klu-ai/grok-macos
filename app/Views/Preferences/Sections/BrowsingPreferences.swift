@@ -1,6 +1,6 @@
 //
 //  BrowsingPreferences.swift
-//  klu macos assistant
+//  Grok macOS assistant
 //
 //  Created by Stephen M. Walker II on 2/12/25.
 //
@@ -69,7 +69,7 @@ struct BrowsingPreferences: View {
             Section {
                 Toggle("Enable Browser Integration", isOn: $browserEnabled)
             } footer: {
-                Text("Enable Klu to use your browser for deep research")
+                Text("Enable Grok to use your browser for deep research")
             }
             
             if browserEnabled {
@@ -116,21 +116,21 @@ struct BrowsingPreferences: View {
                 Section("Data Sync") {
                     VStack(alignment: .leading) {
                         Toggle("Sync Bookmarks", isOn: $syncBookmarks)
-                        Text("Sync browser bookmarks with Klu")
+                        Text("Sync browser bookmarks with Grok")
                             .foregroundColor(.secondary)
                             .font(.caption)
                     }
                     
                     VStack(alignment: .leading) {
                         Toggle("Sync History", isOn: $syncHistory)
-                        Text("Sync browsing history with Klu")
+                        Text("Sync browsing history with Grok")
                             .foregroundColor(.secondary)
                             .font(.caption)
                     }
                         
                     VStack(alignment: .leading) {
                         Toggle("Clear Browsing Data on Quit", isOn: $clearBrowsingDataOnQuit)
-                        Text("Automatically clear synced browsing data when quitting Klu")
+                        Text("Automatically clear synced browsing data when quitting Grok")
                             .foregroundColor(.secondary)
                             .font(.caption)
                     }

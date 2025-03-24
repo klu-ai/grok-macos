@@ -1,11 +1,11 @@
 //
 //  Main.swift
-//  klu macos assistant
+//  Grok macOS assistant
 //
-//  Created by Stephen M. Walker II on 2/12/25.
+//  Created by Stephen M. Walker II on 3/24/25.
 //
 //  Description:
-//  This file is the main entry point for the Klu macOS Assistant. It initializes the application
+//  This file is the main entry point for the Grok macOS Assistant. It initializes the application
 //  environment, sets up persistent data storage, manages window behavior, and integrates
 //  system-level features like onboarding and menu commands.
 //
@@ -30,7 +30,7 @@
 //  - SwiftUI for UI components
 //  - SwiftData for data persistence
 //  - AppKit for macOS-specific window management
-//  - appKlu built for macOS 15 Sequoia and does not support earlier versions
+//  - appGrok built for macOS 15 Sequoia and does not support earlier versions
 //  - Apple Silicon Macs required for running models locally
 //
 
@@ -38,9 +38,9 @@ import SwiftUI        // Import SwiftUI framework for building user interfaces.
 import SwiftData      // Import SwiftData for data modeling and persistence.
 import AppKit         // Import AppKit for macOS-specific window management.
 
-/// The main entry point of the Klu Assistant macOS app.
+/// The main entry point of the Grok Assistant macOS app.
 @main
-struct kluApp: App {
+struct grokApp: App {
     /// Integrates the custom AppDelegate for handling application-level events.
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     
@@ -118,7 +118,7 @@ struct kluApp: App {
     /// The body of the application, defining the user interface and behavior.
     var body: some Scene {
         // Define the main window group for the app.
-        WindowGroup("Klu Assistant") {
+        WindowGroup("Grok Assistant") {
             AssistantView(currentThread: $currentThread, viewModel: viewModel, runLLM: runLLM)
                 .environmentObject(appSettings)
                 .environmentObject(permissionManager)
@@ -134,7 +134,7 @@ struct kluApp: App {
                 }
         }
         // Ensure only one window is created by handling external events
-        .handlesExternalEvents(matching: Set(arrayLiteral: "kluAssistant"))
+        .handlesExternalEvents(matching: Set(arrayLiteral: "grokAssistant"))
         .defaultSize(width: 1000, height: 700)
         .defaultPosition(.center)
 
@@ -170,7 +170,7 @@ struct kluApp: App {
                     if let existingMainWindow = windowManager.mainWindow {
                         // If we already have a reference to the main window, use it
                         windowManager.updateMainWindow(existingMainWindow)
-                    } else if let window = NSApp.windows.first(where: { $0.title.contains("Klu Assistant") }) {
+                    } else if let window = NSApp.windows.first(where: { $0.title.contains("Grok Assistant") }) {
                         // Otherwise find the window by title and use it
                         windowManager.updateMainWindow(window)
                     }
