@@ -1,9 +1,9 @@
 # Klu macOS Assistant Development Guide
 
 ## Build & Test Commands
-- Build: `xcodebuild -scheme klu -project klu.xcodeproj -configuration Debug build | tee build_log.txt`
-- Clean Build: `xcodebuild clean && xcodebuild -scheme klu -project klu.xcodeproj -configuration Debug build`
-- Run app after build (without confirmation): `open -a klu.app`
+- Build: `xcodebuild -scheme klu -project grok-macos.xcodeproj -configuration Debug build | tee build_log.txt`
+- Clean Build: `xcodebuild clean && xcodebuild -scheme klu -project grok-macos.xcodeproj -configuration Debug build`
+- Run app after build (without confirmation): `open -a grok.app`
 
 ## Code Style Guidelines
 - Follow MVVM architecture with SwiftUI
