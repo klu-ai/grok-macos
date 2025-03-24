@@ -1,12 +1,12 @@
 //
 //  ThreadManager.swift
-//  klu macos assistant
+//  Grok macOS assistant
 //
 //  Created by Stephen M. Walker II on 3/02/25.
 //
 //  Overview:
 //  This file defines the ThreadManager class, which centralizes all thread and message management
-//  operations for the Klu macOS assistant. It provides a single point of responsibility for 
+//  operations for the Grok macOS assistant. It provides a single point of responsibility for 
 //  creating, deleting, and editing threads, as well as retrieving messages in a consistent way.
 //
 //  Core Responsibilities:

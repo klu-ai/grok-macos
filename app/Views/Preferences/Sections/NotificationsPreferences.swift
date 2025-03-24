@@ -1,6 +1,6 @@
 //
 //  NotificationsPreferences.swift
-//  klu macos assistant
+// Grok macOS assistant
 //
 //  Created by Stephen M. Walker II on 2/12/25.
 //

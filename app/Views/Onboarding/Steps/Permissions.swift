@@ -1,5 +1,5 @@
 // SetupPermissions.swift
-//  klu macos assistant
+// Grok macOS assistant
 //  Created by Stephen M. Walker II on 3/14/24.
 //
 //  Description:

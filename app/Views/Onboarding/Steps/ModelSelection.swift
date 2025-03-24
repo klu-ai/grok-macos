@@ -1,6 +1,6 @@
 //
 //  ModelSelection.swift
-//  klu macos assistant
+// Grok macOS assistant
 //
 //  Created by Stephen M. Walker II on 5/16/25.
 //

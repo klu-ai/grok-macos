@@ -1,6 +1,6 @@
 //
 //  FloatingChat.swift
-//  klu macos assistant
+//  Grok macOS assistant
 //
 //  Created by Stephen M. Walker II on 3/06/25.
 //
@@ -79,7 +79,7 @@ struct FloatingChatWindow: View {
                 
                 Button(action: {
                     // Open in main window
-                    if let mainWindow = NSApp.windows.first(where: { $0.title == "Klu Assistant" }) {
+                    if let mainWindow = NSApp.windows.first(where: { $0.title == "Grok Assistant" }) {
                         WindowManager.shared.updateMainWindow(mainWindow)
                     }
                 }) {

@@ -1,6 +1,6 @@
 //
 //  LaunchAtLoginManager.swift
-//  klu macos assistant
+// Grok macOS assistant
 //
 //  Created by Stephen M. Walker II on 2/12/25.
 //
@@ -35,7 +35,7 @@ class LaunchAtLoginManager {
     
     /// The bundle identifier of the helper app, not the main app.
     /// This must match the identifier of the login helper embedded in Contents/Library/LoginItems.
-    private let loginItemIdentifier = "com.humans.klu.LoginItemHelper"
+    private let loginItemIdentifier = "com.humans.grok.LoginItemHelper"
     
     /// Private initializer for singleton pattern
     private init() {}

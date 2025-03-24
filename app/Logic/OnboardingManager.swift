@@ -1,6 +1,6 @@
 //
 //  OnboardingManager.swift
-//  klu macos assistant
+//  Grok macOS assistant
 //
 //  Created by Stephen M. Walker II on 2/12/25.
 //
@@ -38,7 +38,7 @@
 import SwiftUI
 import Combine
 
-/// Manages the onboarding flow and progress tracking for the Klu assistant.
+/// Manages the onboarding flow and progress tracking for the Grok assistant.
 class OnboardingManager: ObservableObject {
     static let shared = OnboardingManager()
     
@@ -158,7 +158,7 @@ enum OnboardingStep: Int, CaseIterable {
     var title: String {
         switch self {
         case .welcome:
-            return "Welcome to Klu"
+            return "Welcome to Grok"
         case .modelSelection:
             return "Choose AI Model"
         case .permissions:

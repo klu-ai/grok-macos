@@ -1,11 +1,11 @@
 //
 //  Message.swift
-//  klu macos assistant
+//  Grok macOS assistant
 //
 //  Created by Stephen M. Walker II on 2/12/25.
 //
 //  Overview:
-//  This file contains the data models for chat messages and threads used in the Klu macOS assistant.
+//  This file contains the data models for chat messages and threads used in the Grok macOS assistant.
 //  It leverages SwiftData for persistent storage and management of chat history.
 //
 //  Core Models:

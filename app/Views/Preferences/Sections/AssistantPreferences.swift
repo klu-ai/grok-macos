@@ -1,6 +1,6 @@
 //
 //  AssistantPreferences.swift
-//  klu macos assistant
+// Grok macOS assistant
 //
 //  Created by Claude AI on 3/11/2024.
 //

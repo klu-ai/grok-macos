@@ -92,7 +92,7 @@
 
 /* Begin PBXFileReference section */
 		361276102D688AB900237A1E /* LoginItemHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LoginItemHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		3632A3052D5B414D001B87E1 /* klu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = klu.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		3632A3052D5B414D001B87E1 /* grok.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = grok.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3695FC9E2D919EF700FB7F00 /* AudioProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioProcessor.swift; sourceTree = "<group>"; };
 		3695FC9F2D919EF700FB7F00 /* WhisperTranscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhisperTranscriptionManager.swift; sourceTree = "<group>"; };
 		3695FCA12D919EF700FB7F00 /* blacklist.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = blacklist.plist; sourceTree = "<group>"; };
@@ -208,7 +208,7 @@
 		3632A3062D5B414D001B87E1 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				3632A3052D5B414D001B87E1 /* klu.app */,
+				3632A3052D5B414D001B87E1 /* grok.app */,
 				361276102D688AB900237A1E /* LoginItemHelper.app */,
 			);
 			name = Products;
@@ -476,9 +476,9 @@
 			productReference = 361276102D688AB900237A1E /* LoginItemHelper.app */;
 			productType = "com.apple.product-type.application";
 		};
-		3632A3042D5B414D001B87E1 /* klu */ = {
+		3632A3042D5B414D001B87E1 /* grok */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 3632A32B2D5B414E001B87E1 /* Build configuration list for PBXNativeTarget "klu" */;
+			buildConfigurationList = 3632A32B2D5B414E001B87E1 /* Build configuration list for PBXNativeTarget "grok" */;
 			buildPhases = (
 				3632A3012D5B414D001B87E1 /* Sources */,
 				3632A3022D5B414D001B87E1 /* Frameworks */,
@@ -488,9 +488,9 @@
 			);
 			dependencies = (
 			);
-			name = klu;
-			productName = klu;
-			productReference = 3632A3052D5B414D001B87E1 /* klu.app */;
+			name = grok;
+			productName = grok;
+			productReference = 3632A3052D5B414D001B87E1 /* grok.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -528,7 +528,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				3632A3042D5B414D001B87E1 /* klu */,
+				3632A3042D5B414D001B87E1 /* grok */,
 				3612760F2D688AB900237A1E /* LoginItemHelper */,
 			);
 		};
@@ -826,19 +826,19 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
-				CODE_SIGN_ENTITLEMENTS = klu/klu.entitlements;
+				CODE_SIGN_ENTITLEMENTS = grok/grok.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development: Stephen Walker II (J5893967J9)";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development: Stephen Walker II (J5893967J9)";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_ASSET_PATHS = "\"klu/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"grok/Preview Content\"";
 				DEVELOPMENT_TEAM = 95FP69XZCG;
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = 95FP69XZCG;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = klu/Info.plist;
+				INFOPLIST_FILE = grok/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = grok;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSCameraUsageDescription = String;
@@ -877,19 +877,19 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
-				CODE_SIGN_ENTITLEMENTS = klu/klu.entitlements;
+				CODE_SIGN_ENTITLEMENTS = grok/grok.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development: Stephen Walker II (J5893967J9)";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development: Stephen Walker II (J5893967J9)";
 				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
 				DEAD_CODE_STRIPPING = YES;
-				DEVELOPMENT_ASSET_PATHS = "\"klu/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "\"grok/Preview Content\"";
 				DEVELOPMENT_TEAM = 95FP69XZCG;
 				"DEVELOPMENT_TEAM[sdk=macosx*]" = 95FP69XZCG;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = klu/Info.plist;
+				INFOPLIST_FILE = grok/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = grok;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSCameraUsageDescription = String;
@@ -943,7 +943,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		3632A32B2D5B414E001B87E1 /* Build configuration list for PBXNativeTarget "klu" */ = {
+		3632A32B2D5B414E001B87E1 /* Build configuration list for PBXNativeTarget "grok" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				3632A32C2D5B414E001B87E1 /* Debug */,

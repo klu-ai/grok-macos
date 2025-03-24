@@ -1,6 +1,6 @@
 //
 //  Chat.swift
-//  klu macos assistant
+// Grok macOS assistant
 //
 //  Created by Stephen M. Walker II on 2/12/25.
 //
@@ -288,7 +288,7 @@ struct ChatView: View {
                     .background(
                         WindowAccessor(window: $window)
                             .onChange(of: window) { _, newWindow in
-                                isMainWindowKey = newWindow?.isKeyWindow ?? false && newWindow?.title == "Klu Assistant"
+                                isMainWindowKey = newWindow?.isKeyWindow ?? false && newWindow?.title == "Grok Assistant"
                             }
                     )
                     .onAppear {

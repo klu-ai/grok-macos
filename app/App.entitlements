@@ -21,7 +21,7 @@
 	<true/>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>com.humans.klu</string>
+		<string>com.humans.grok</string>
 	</array>
 	<key>com.apple.security.files.all</key>
 	<true/>

@@ -1,6 +1,6 @@
 //
 //  DockVisibilityManager.swift
-//  klu macos assistant
+//  Grok macOS assistant
 //
 //  Created by Stephen M. Walker II on 2/26/25.
 //
@@ -55,8 +55,8 @@ class DockVisibilityManager {
                 // Show the dock icon
                 NSApp.setActivationPolicy(.regular)
                 
-                // Find the main window (assumes title is "Klu Assistant")
-                if let mainWindow = windows.first(where: { $0.title == "Klu Assistant" }) {
+                // Find the main window (assumes title is "Grok Assistant")
+                if let mainWindow = windows.first(where: { $0.title == "Grok Assistant" }) {
                     // Restore the main window and bring it to the front
                     mainWindow.setIsVisible(true)
                     mainWindow.orderFrontRegardless()
@@ -83,7 +83,7 @@ class DockVisibilityManager {
                 NSApp.setActivationPolicy(.accessory)
                 
                 // Find the main window and ensure it is restored
-                if let mainWindow = windows.first(where: { $0.title == "Klu Assistant" }) {
+                if let mainWindow = windows.first(where: { $0.title == "Grok Assistant" }) {
                     mainWindow.setIsVisible(true)
                     mainWindow.orderFrontRegardless()
                 }
@@ -94,7 +94,7 @@ class DockVisibilityManager {
                     settingsWindow.makeKey()
                 } else {
                     // Otherwise, make the main window key and activate the app
-                    if let mainWindow = windows.first(where: { $0.title == "Klu Assistant" }) {
+                    if let mainWindow = windows.first(where: { $0.title == "Grok Assistant" }) {
                         mainWindow.makeKeyAndOrderFront(nil)
                     }
                     NSApp.activate(ignoringOtherApps: true)

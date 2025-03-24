@@ -1,11 +1,10 @@
-//  ChatViewModel.swift
-//  klu macos assistant
+// Grok macOS assistant
 //
 //  Created by Stephen M. Walker II on 2/12/25.
 //
 //  Overview:
 //  This file defines the ChatViewModel class, which manages the state and logic of the chat interface
-//  in the Klu macOS assistant. It organizes conversations into threads and integrates with RunLLM for
+//  in the Grok macOS assistant. It organizes conversations into threads and integrates with RunLLM for
 //  generating responses. It also integrates with SwiftData's ModelContext for persisting threads and messages.
 //
 //  Core Responsibilities:
@@ -24,7 +23,6 @@
 //  - Instantiate with a RunLLM instance and a ModelContext
 //  - Manage chat threads and messages
 //  - Generate responses using LLM
-//
 
 import Foundation
 import SwiftUI
