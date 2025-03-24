@@ -8,16 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		361275EA2D65DE6D00237A1E /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 361275E92D65DE6D00237A1E /* MarkdownUI */; };
-		361275F12D65E25000237A1E /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = 361275F02D65E25000237A1E /* MLXLLM */; };
-		361275F32D65E25000237A1E /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 361275F22D65E25000237A1E /* MLXLMCommon */; };
-		361275F52D65E25000237A1E /* MLXMNIST in Frameworks */ = {isa = PBXBuildFile; productRef = 361275F42D65E25000237A1E /* MLXMNIST */; };
-		361275F72D65E25000237A1E /* MLXVLM in Frameworks */ = {isa = PBXBuildFile; productRef = 361275F62D65E25000237A1E /* MLXVLM */; };
-		361275F92D65E25000237A1E /* StableDiffusion in Frameworks */ = {isa = PBXBuildFile; productRef = 361275F82D65E25000237A1E /* StableDiffusion */; };
-		3612762F2D68B2A000237A1E /* HotKey in Frameworks */ = {isa = PBXBuildFile; productRef = 3612762E2D68B2A000237A1E /* HotKey */; };
 		362828342D6F05F0007AB857 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 362828332D6F05F0007AB857 /* KeyboardShortcuts */; };
-		363B43C92D7C441400582B4E /* AudioKit in Frameworks */ = {isa = PBXBuildFile; productRef = 363B43C82D7C441400582B4E /* AudioKit */; };
-		363B43CC2D7C442D00582B4E /* WhisperKit in Frameworks */ = {isa = PBXBuildFile; productRef = 363B43CB2D7C442D00582B4E /* WhisperKit */; };
-		3695FCFC2D919EF700FB7F00 /* blacklist.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3695FCA12D919EF700FB7F00 /* blacklist.plist */; };
+		3695FCFC2D919EF700FB7F00 /* blacklist.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3695FC9E2D919EF700FB7F00 /* blacklist.plist */; };
 		3695FCFD2D919EF700FB7F00 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 3695FCCB2D919EF700FB7F00 /* Preview Assets.xcassets */; };
 		3695FCFE2D919EF700FB7F00 /* whitelist.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3695FCA22D919EF700FB7F00 /* whitelist.plist */; };
 		3695FCFF2D919EF700FB7F00 /* Original.png in Resources */ = {isa = PBXBuildFile; fileRef = 3695FCCE2D919EF700FB7F00 /* Original.png */; };
@@ -95,7 +87,7 @@
 		3632A3052D5B414D001B87E1 /* grok.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = grok.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3695FC9E2D919EF700FB7F00 /* AudioProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioProcessor.swift; sourceTree = "<group>"; };
 		3695FC9F2D919EF700FB7F00 /* WhisperTranscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhisperTranscriptionManager.swift; sourceTree = "<group>"; };
-		3695FCA12D919EF700FB7F00 /* blacklist.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = blacklist.plist; sourceTree = "<group>"; };
+		3695FCA12D919EF700FB7F00 /* blacklist.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = blacklist.plist; sourceTree = "<group>"; };
 		3695FCA22D919EF700FB7F00 /* whitelist.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = whitelist.plist; sourceTree = "<group>"; };
 		3695FCA42D919EF700FB7F00 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
 		3695FCA52D919EF700FB7F00 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
@@ -297,7 +289,6 @@
 			isa = PBXGroup;
 			children = (
 				3695FCBB2D919EF700FB7F00 /* DockVisibilityManager.swift */,
-				3695FCBC2D919EF700FB7F00 /* LaunchAtLoginManager.swift */,
 				3695FCBD2D919EF700FB7F00 /* PreferenceSection.swift */,
 			);
 			path = Preferences;
@@ -457,25 +448,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		3612760F2D688AB900237A1E /* LoginItemHelper */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 3612761E2D688ABA00237A1E /* Build configuration list for PBXNativeTarget "LoginItemHelper" */;
-			buildPhases = (
-				3612760C2D688AB900237A1E /* Sources */,
-				3612760D2D688AB900237A1E /* Frameworks */,
-				3612760E2D688AB900237A1E /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			name = LoginItemHelper;
-			packageProductDependencies = (
-			);
-			productName = LoginItemHelper;
-			productReference = 361276102D688AB900237A1E /* LoginItemHelper.app */;
-			productType = "com.apple.product-type.application";
-		};
 		3632A3042D5B414D001B87E1 /* grok */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 3632A32B2D5B414E001B87E1 /* Build configuration list for PBXNativeTarget "grok" */;
@@ -503,9 +475,6 @@
 				LastSwiftUpdateCheck = 1620;
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
-					3612760F2D688AB900237A1E = {
-						CreatedOnToolsVersion = 16.2;
-					};
 					3632A3042D5B414D001B87E1 = {
 						CreatedOnToolsVersion = 16.0;
 					};
@@ -529,7 +498,6 @@
 			projectRoot = "";
 			targets = (
 				3632A3042D5B414D001B87E1 /* grok */,
-				3612760F2D688AB900237A1E /* LoginItemHelper */,
 			);
 		};
 /* End PBXProject section */
@@ -589,7 +557,6 @@
 				3695FD132D919EF700FB7F00 /* OnboardingManager.swift in Sources */,
 				3695FD142D919EF700FB7F00 /* ThreadManager.swift in Sources */,
 				3695FD152D919EF700FB7F00 /* HardwarePreferences.swift in Sources */,
-				3695FD162D919EF700FB7F00 /* LaunchAtLoginManager.swift in Sources */,
 				3695FD172D919EF700FB7F00 /* GeneralPreferences.swift in Sources */,
 				3695FD182D919EF700FB7F00 /* PermissionManager.swift in Sources */,
 				3695FD192D919EF700FB7F00 /* Preferences.swift in Sources */,
@@ -826,7 +793,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
-				CODE_SIGN_ENTITLEMENTS = grok/grok.entitlements;
+				CODE_SIGN_ENTITLEMENTS = app/grok.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development: Stephen Walker II (J5893967J9)";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development: Stephen Walker II (J5893967J9)";
 				CODE_SIGN_STYLE = Manual;
@@ -877,7 +844,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = NO;
-				CODE_SIGN_ENTITLEMENTS = grok/grok.entitlements;
+				CODE_SIGN_ENTITLEMENTS = app/grok.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development: Stephen Walker II (J5893967J9)";
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development: Stephen Walker II (J5893967J9)";
 				CODE_SIGN_STYLE = Manual;
@@ -925,15 +892,6 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		3612761E2D688ABA00237A1E /* Build configuration list for PBXNativeTarget "LoginItemHelper" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				3612761F2D688ABA00237A1E /* Debug */,
-				361276202D688ABA00237A1E /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		3632A3002D5B414D001B87E1 /* Build configuration list for PBXProject "grok-macos" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -963,44 +921,12 @@
 				minimumVersion = 2.4.1;
 			};
 		};
-		361275772D65DAF500237A1E /* XCRemoteSwiftPackageReference "mlx-swift-examples" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ml-explore/mlx-swift-examples/";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.21.2;
-			};
-		};
-		3612762D2D68B2A000237A1E /* XCRemoteSwiftPackageReference "HotKey" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/soffes/HotKey";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 		362828322D6F05F0007AB857 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.2.4;
-			};
-		};
-		363B43C72D7C441400582B4E /* XCRemoteSwiftPackageReference "AudioKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/AudioKit/AudioKit";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.6.4;
-			};
-		};
-		363B43CA2D7C442D00582B4E /* XCRemoteSwiftPackageReference "WhisperKit" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/argmaxinc/WhisperKit";
-			requirement = {
-				branch = main;
-				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -1011,50 +937,10 @@
 			package = 361275762D65D90800237A1E /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
 			productName = MarkdownUI;
 		};
-		361275F02D65E25000237A1E /* MLXLLM */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 361275772D65DAF500237A1E /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
-			productName = MLXLLM;
-		};
-		361275F22D65E25000237A1E /* MLXLMCommon */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 361275772D65DAF500237A1E /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
-			productName = MLXLMCommon;
-		};
-		361275F42D65E25000237A1E /* MLXMNIST */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 361275772D65DAF500237A1E /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
-			productName = MLXMNIST;
-		};
-		361275F62D65E25000237A1E /* MLXVLM */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 361275772D65DAF500237A1E /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
-			productName = MLXVLM;
-		};
-		361275F82D65E25000237A1E /* StableDiffusion */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 361275772D65DAF500237A1E /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
-			productName = StableDiffusion;
-		};
-		3612762E2D68B2A000237A1E /* HotKey */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 3612762D2D68B2A000237A1E /* XCRemoteSwiftPackageReference "HotKey" */;
-			productName = HotKey;
-		};
 		362828332D6F05F0007AB857 /* KeyboardShortcuts */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 362828322D6F05F0007AB857 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */;
 			productName = KeyboardShortcuts;
-		};
-		363B43C82D7C441400582B4E /* AudioKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 363B43C72D7C441400582B4E /* XCRemoteSwiftPackageReference "AudioKit" */;
-			productName = AudioKit;
-		};
-		363B43CB2D7C442D00582B4E /* WhisperKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 363B43CA2D7C442D00582B4E /* XCRemoteSwiftPackageReference "WhisperKit" */;
-			productName = WhisperKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

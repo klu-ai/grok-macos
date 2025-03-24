@@ -10,7 +10,5 @@
 	<string>String</string>
 	<key>NSFileProviderPresenceUsageDescription</key>
 	<string>Grok needs full disk access to help you access and organize your files</string>
-	<key>SMAppServiceTypeLoginItem</key>
-	<string>com.humans.grok</string>
 </dict>
 </plist>

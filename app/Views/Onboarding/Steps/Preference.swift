@@ -38,12 +38,6 @@ import KeyboardShortcuts
 /// The basic preferences step of the onboarding process.
 struct AppPreferences: View {
     // MARK: - State Properties
-    @AppStorage("launchAtLogin") private var launchAtLogin = false {
-        didSet {
-            // Update the actual login item when the toggle changes
-            LaunchAtLoginManager.shared.setLaunchAtLogin(launchAtLogin)
-        }
-    }
     @AppStorage("showInMenuBar") private var showInMenuBar = true
     @AppStorage("showInDock") private var showInDock = true {
         didSet {
@@ -73,9 +67,6 @@ struct AppPreferences: View {
     
     // MARK: - Initialization
     init() {
-        // Sync the AppStorage value with the actual login item status
-        launchAtLogin = LaunchAtLoginManager.shared.isEnabled()
-        
         // Sync the AppStorage value with the actual dock visibility status
         showInDock = DockVisibilityManager.shared.isDockIconVisible()
     }
@@ -98,12 +89,6 @@ struct AppPreferences: View {
             
             Form {
                 Section("Application") {
-                    PreferenceToggleRow(
-                        title: "Launch at login",
-                        description: "Automatically start Grok when you log into your Mac",
-                        isOn: $launchAtLogin
-                    )
-                    
                     PreferenceToggleRow(
                         title: "New thread on app load",
                         description: "Start with a new chat thread each time you open Grok",

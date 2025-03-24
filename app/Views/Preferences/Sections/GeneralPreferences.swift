@@ -42,29 +42,21 @@ struct GeneralPreferences: View {
     @EnvironmentObject var appSettings: AppSettings
     
     // MARK: - State Properties
-    @AppStorage("launchAtLogin") private var launchAtLogin = false {
-        didSet {
-            // Update the actual login item when the toggle changes
-            LaunchAtLoginManager.shared.setLaunchAtLogin(launchAtLogin)
-        }
-    }
     @AppStorage("newThreadOnLoad") private var newThreadOnLoad = true
     @AppStorage("showInMenuBar") private var showInMenuBar = true
     @AppStorage("showInDock") private var showInDock = true {
-    didSet {
-        if showInDock != oldValue {
-            DockVisibilityManager.shared.setDockIconVisibility(showInDock)
+        didSet {
+            if showInDock != oldValue {
+                DockVisibilityManager.shared.setDockIconVisibility(showInDock)
+            }
         }
     }
-}
     @AppStorage("alwaysOnTop") private var alwaysOnTop = false
     @AppStorage("useGlobalShortcut") private var useGlobalShortcut = true
 
     
     // MARK: - Initialization
     init() {
-        // Sync the AppStorage value with the actual login item status
-        launchAtLogin = LaunchAtLoginManager.shared.isEnabled()
         // Sync the AppStorage value with the actual dock visibility status
         showInDock = DockVisibilityManager.shared.isDockIconVisible()
     }
@@ -73,13 +65,6 @@ struct GeneralPreferences: View {
         Form {
             Section() {
                 Section("Application") {
-                    VStack(alignment: .leading) {
-                        Toggle("Launch at login", isOn: $launchAtLogin)
-                        Text("Automatically start Grok when you log into your Mac")
-                            .foregroundColor(.secondary)
-                            .font(.caption)
-                    }
-                    
                     VStack(alignment: .leading) {
                         Toggle("New thread on app load", isOn: $newThreadOnLoad)
                         Text("Start with a new chat thread each time you open Grok")

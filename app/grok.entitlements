@@ -22,7 +22,5 @@
 	<true/>
 	<key>com.apple.security.personal-information.location</key>
 	<true/>
-	<!-- <key>com.apple.developer.sm-login-item-app</key>
-	<true/> -->
 </dict>
 </plist>
