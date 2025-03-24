@@ -1,8 +1,8 @@
-# Klu - macOS AI Assistant
+# Grok - macOS AI Assistant
 
 <img width="868" alt="image" src="https://github.com/user-attachments/assets/8db01500-1467-483b-91a1-9cf676f29cbe" />
 
-Klu (K-human Likeness Utility) is a modern macOS AI assistant that seamlessly integrates with your system, providing an intuitive chat interface and comprehensive system integration capabilities. Built with SwiftUI and designed specifically for macOS 15.0+, it offers a native experience with both menu bar and dock presence.
+Grok is a modern macOS AI assistant that seamlessly integrates with your system, providing an intuitive chat interface and comprehensive system integration capabilities. Built with SwiftUI and leveraging the latest macOS features, it offers a powerful and user-friendly experience.
 
 ## Features
 
@@ -39,7 +39,7 @@ Klu (K-human Likeness Utility) is a modern macOS AI assistant that seamlessly in
 ## Project Structure
 
 ```
-klu/
+app/
 ├── Views/                                  # User interface components
 │   ├── Onboarding/                         # Onboarding experience
 │   │   ├── Onboarding                  # Main onboarding container
@@ -120,7 +120,7 @@ The app includes a sophisticated LLM (Large Language Model) integration system:
 ## Setup
 
 1. Clone the repository
-2. Open `klu.xcodeproj` in Xcode
+2. Open `grok-macos.xcodeproj` in Xcode
 3. Build and run the project
 4. Complete the guided onboarding process:
    - Welcome and introduction
@@ -128,7 +128,7 @@ The app includes a sophisticated LLM (Large Language Model) integration system:
    - Configure system permissions
    - Set initial preferences
    - Take the UI tour
-   - Begin using Klu
+   - Begin using Grok
 
 ## Configuration
 
@@ -160,5 +160,5 @@ The app includes a sophisticated LLM (Large Language Model) integration system:
 ## Version
 
 Current Version: 1.0
-Bundle Identifier: humans.klu
+Bundle Identifier: humans.grok
 Minimum macOS Version: 15.0

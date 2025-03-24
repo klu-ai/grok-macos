@@ -5,12 +5,12 @@
 	<key>NSCalendarsFullAccessUsageDescription</key>
 	<string>String</string>
 	<key>NSContactsUsageDescription</key>
-	<string>Klu needs access to your contacts to provide contact-related functionality</string>
+	<string>Grok needs access to your contacts to provide contact-related functionality</string>
 	<key>NSRemindersFullAccessUsageDescription</key>
 	<string>String</string>
 	<key>NSFileProviderPresenceUsageDescription</key>
-	<string>Klu needs full disk access to help you access and organize your files</string>
+	<string>Grok needs full disk access to help you access and organize your files</string>
 	<key>SMAppServiceTypeLoginItem</key>
-	<string>com.humans.klu</string>
+	<string>com.humans.grok</string>
 </dict>
 </plist>

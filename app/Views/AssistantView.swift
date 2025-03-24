@@ -1,12 +1,12 @@
 //
 //  AssistantView.swift
-//  klu macos assistant
+//  Grok macOS assistant
 //
 //  Created by Stephen M. Walker II on 2/25/25.
 //
 //  Description:
 //  This file defines the AssistantView, which serves as the main interface for interacting with
-//  the Klu Assistant. It provides a split view layout with a sidebar for thread navigation and
+//  the Grok Assistant. It provides a split view layout with a sidebar for thread navigation and
 //  a detail view for chat interactions. The view integrates with the app's state management
 //  and provides toolbar actions for creating new threads and accessing settings.
 //
@@ -24,7 +24,7 @@
 
 import SwiftUI
 
-/// The main view for the Klu Assistant, providing a split view interface for thread navigation and chat interaction.
+/// The main view for the Grok Assistant, providing a split view interface for thread navigation and chat interaction.
 struct AssistantView: View {
     /// Binding to the currently selected thread in the conversation.
     @Binding var currentThread: Thread?

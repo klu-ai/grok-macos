@@ -3,12 +3,12 @@
 //  Created by Stephen M. Walker II on 3/14/24.
 //
 //  Description:
-//  This file defines the welcome step of the onboarding process for the Klu macOS Assistant.
+//  This file defines the welcome step of the onboarding process for the Grok macOS Assistant.
 //  It introduces users to the app's key features and provides a native macOS experience.
 //
 //  Core responsibilities:
 //  - Displays a welcome message and app icon
-//  - Highlights key features of the Klu assistant
+//  - Highlights key features of the Grok assistant
 //  - Ensures a consistent and engaging onboarding experience
 //
 //  Usage:
@@ -36,7 +36,7 @@ struct Welcome: View {
                 }
             //    .modifier(BounceEffectModifier())
             
-            Text("Welcome to Klu")
+            Text("Welcome to Grok")
                 .font(.largeTitle)
                 .fontWeight(.bold)
             

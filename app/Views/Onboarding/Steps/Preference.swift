@@ -100,37 +100,37 @@ struct AppPreferences: View {
                 Section("Application") {
                     PreferenceToggleRow(
                         title: "Launch at login",
-                        description: "Automatically start Klu when you log into your Mac",
+                        description: "Automatically start Grok when you log into your Mac",
                         isOn: $launchAtLogin
                     )
                     
                     PreferenceToggleRow(
                         title: "New thread on app load",
-                        description: "Start with a new chat thread each time you open Klu",
+                        description: "Start with a new chat thread each time you open Grok",
                         isOn: $newThreadOnLoad
                     )
                     
                     PreferenceToggleRow(
                         title: "Show in menu bar",
-                        description: "Display Klu in the menu bar for quick access",
+                        description: "Display Grok in the menu bar for quick access",
                         isOn: $showInMenuBar
                     )
 
                     PreferenceToggleRow(
                         title: "Keep window always on top",
-                        description: "Keep the Klu window visible above other windows",
+                        description: "Keep the Grok window visible above other windows",
                         isOn: $alwaysOnTop
                     )
                     
                     // PreferenceToggleRow(
                     //     title: "Show in Dock",
-                    //     description: "Show Klu icon in the Dock",
+                    //     description: "Show Grok icon in the Dock",
                     //     isOn: $showInDock
                     // )
                     
                     // PreferenceToggleRow(
                     //     title: "Automatic updates",
-                    //     description: "Keep Klu up to date automatically",
+                    //     description: "Keep Grok up to date automatically",
                     //     isOn: $autoCheckForUpdates
                     // )
                 }
@@ -138,7 +138,7 @@ struct AppPreferences: View {
                 Section("Keyboard Shortcut") {
                     PreferenceToggleRow(
                         title: "Enable global shortcut",
-                        description: "Use a keyboard shortcut to quickly access Klu from anywhere",
+                        description: "Use a keyboard shortcut to quickly access Grok from anywhere",
                         isOn: $useGlobalShortcut
                     )
                     

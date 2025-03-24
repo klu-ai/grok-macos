@@ -4,7 +4,7 @@
 
 //
 // Description:
-// The UITour view forms a core component of the onboarding process in the Klu macos assistant.
+// The UITour view forms a core component of the onboarding process in the Grok macOS assistant.
 // It guides new users through essential app features by presenting a series of interactive tour steps
 // that highlight areas such as the chat interface, session sidebar, quick actions, menu bar access,
 // and application preferences.
@@ -54,7 +54,7 @@ struct UITour: View {
     private let tourSteps = [
         TourStep(
             title: "Chat Interface",
-            description: "This is where you'll interact with Klu. Type your messages here and see Klu's responses.",
+            description: "This is where you'll interact with Grok. Type your messages here and see Grok's responses.",
             image: "chat.bubble.2",
             position: .center
         ),
@@ -72,13 +72,13 @@ struct UITour: View {
         ),
         TourStep(
             title: "Menu Bar Access",
-            description: "Quickly access Klu from the menu bar icon, even when the main window is closed.",
+            description: "Quickly access Grok from the menu bar icon, even when the main window is closed.",
             image: "menubar.rectangle",
             position: .top
         ),
         TourStep(
             title: "Preferences",
-            description: "Customize Klu's behavior, appearance, and integrations from the Preferences window.",
+            description: "Customize Grok's behavior, appearance, and integrations from the Preferences window.",
             image: "gearshape",
             position: .right
         )

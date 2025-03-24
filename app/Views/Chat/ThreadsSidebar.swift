@@ -1,12 +1,12 @@
 //
 //  ThreadsSidebar.swift
-//  klu macos assistant
+//  Grok macOS assistant
 //
 //  Created by Stephen M. Walker II on 2/12/25.
 //
 //  Description:
 //  This file defines the ThreadsSidebar view, a SwiftUI component for displaying and managing chat threads
-//  in the Klu macOS Assistant. It includes a searchable list of threads with support for renaming via
+//  in the Grok macOS Assistant. It includes a searchable list of threads with support for renaming via
 //  context menu, deletion with confirmation dialogs (via swipe, context menu, or Delete key), and
 //  automatic selection of the next thread after deletion.
 //

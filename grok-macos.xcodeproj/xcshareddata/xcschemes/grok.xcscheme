@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3632A3042D5B414D001B87E1"
-               BuildableName = "klu.app"
-               BlueprintName = "klu"
-               ReferencedContainer = "container:klu.xcodeproj">
+               BuildableName = "grok.app"
+               BlueprintName = "grok"
+               ReferencedContainer = "container:grok-macos.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -36,9 +36,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3632A3162D5B414E001B87E1"
-               BuildableName = "kluTests.xctest"
-               BlueprintName = "kluTests"
-               ReferencedContainer = "container:klu.xcodeproj">
+               BuildableName = "grokTests.xctest"
+               BlueprintName = "grokTests"
+               ReferencedContainer = "container:grok-macos.xcodeproj">
             </BuildableReference>
          </TestableReference>
          <TestableReference
@@ -47,9 +47,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3632A3202D5B414E001B87E1"
-               BuildableName = "kluUITests.xctest"
-               BlueprintName = "kluUITests"
-               ReferencedContainer = "container:klu.xcodeproj">
+               BuildableName = "grokUITests.xctest"
+               BlueprintName = "grokUITests"
+               ReferencedContainer = "container:grok-macos.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -69,9 +69,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3632A3042D5B414D001B87E1"
-            BuildableName = "klu.app"
-            BlueprintName = "klu"
-            ReferencedContainer = "container:klu.xcodeproj">
+            BuildableName = "grok.app"
+            BlueprintName = "grok"
+            ReferencedContainer = "container:grok-macos.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -86,9 +86,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3632A3042D5B414D001B87E1"
-            BuildableName = "klu.app"
-            BlueprintName = "klu"
-            ReferencedContainer = "container:klu.xcodeproj">
+            BuildableName = "grok.app"
+            BlueprintName = "grok"
+            ReferencedContainer = "container:grok-macos.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

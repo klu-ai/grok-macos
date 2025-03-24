@@ -3,7 +3,7 @@
 //  Created by Stephen M. Walker II on 3/14/24.
 //
 //  Description:
-//  This file defines the completion step of the onboarding process for the Klu macOS Assistant.
+//  This file defines the completion step of the onboarding process for the Grok macOS Assistant.
 //  It provides users with a summary of what they can do with the app and offers suggestions
 //  for initial tasks to try.
 //
@@ -36,7 +36,7 @@ struct OnboardingFinished: View {
                 .font(.largeTitle)
                 .fontWeight(.bold)
             
-            Text("Klu is now ready to assist you with your tasks.")
+            Text("Grok is now ready to assist you with your tasks.")
                 .font(.title3)
                 .multilineTextAlignment(.center)
                 .foregroundColor(.secondary)
@@ -49,25 +49,25 @@ struct OnboardingFinished: View {
                 SuggestionRow(
                     icon: "calendar",
                     title: "Schedule a Meeting",
-                    description: "Ask Klu to find a good time and create a calendar event"
+                    description: "Ask Grok to find a good time and create a calendar event"
                 )
                 
                 SuggestionRow(
                     icon: "doc.text",
                     title: "Summarize Text",
-                    description: "Copy some text and ask Klu to summarize it"
+                    description: "Copy some text and ask Grok to summarize it"
                 )
                 
                 SuggestionRow(
                     icon: "magnifyingglass",
                     title: "Search Files",
-                    description: "Ask Klu to find files on your Mac by content or name"
+                    description: "Ask Grok to find files on your Mac by content or name"
                 )
                 
                 SuggestionRow(
                     icon: "keyboard",
                     title: "Use Shortcuts",
-                    description: "Press ⌘ Space to quickly access Klu from anywhere"
+                    description: "Press ⌘ Space to quickly access Grok from anywhere"
                 )
             }
             .padding()
