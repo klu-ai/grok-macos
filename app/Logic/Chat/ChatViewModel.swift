@@ -97,24 +97,8 @@ class ChatViewModel: ObservableObject {
             
             // Update UI on main thread in a single operation
             await MainActor.run {
-                // Check if we have tool calls that were processed
-                if !result.toolMessages.isEmpty {
-                    // Create assistant message with initial output (includes tool call)
-                    _ = threadManager.createMessage(role: .assistant, content: result.initialOutput, thread: thread)
-                    
-                    // Create tool result messages
-                    for toolMessage in result.toolMessages {
-                        let content = toolMessage["content"] ?? ""
-                        let toolCallId = toolMessage["tool_call_id"] ?? ""
-                        _ = threadManager.createMessage(role: .tool, content: content, thread: thread, messageType: .toolResult(toolCallId: toolCallId))
-                    }
-                    
-                    // Create final assistant message with the response after function calls
-                    _ = threadManager.createMessage(role: .assistant, content: result.finalOutput, thread: thread, generatingTime: runLLM.thinkingTime)
-                } else {
-                    // No tool calls - just create a single assistant message with the initial output
-                    _ = threadManager.createMessage(role: .assistant, content: result.initialOutput, thread: thread, generatingTime: runLLM.thinkingTime)
-                }
+                // Create assistant message with the response
+                _ = threadManager.createMessage(role: .assistant, content: result, thread: thread, generatingTime: runLLM.thinkingTime)
                 
                 // Hide thinking indicator with animation
                 withAnimation(.easeInOut(duration: 0.3)) {

@@ -149,7 +149,6 @@ class RunLLM: ObservableObject {
         self.configModel = ModelConfiguration.defaultModel
         self.generationTask = nil
         self.loadState = .idle
-        self.toolFunctions = [:]
     }
 
     /// Checks if a model is fully downloaded by validating required files
@@ -610,14 +609,12 @@ class RunLLM: ObservableObject {
     ///   - thread: The conversation thread providing prompt history.
     ///   - systemPrompt: The system-level prompt to augment generation.
     /// - Returns: A GenerateResult containing the generation components.
-    func generate(modelName: String, thread: Thread, systemPrompt: String) async -> GenerateResult {
-        guard !running else { return GenerateResult(initialOutput: "", toolMessages: [], finalOutput: "") }
+    func generate(modelName: String, thread: Thread, systemPrompt: String) async -> String {
+        guard !running else { return "" }
         running = true
         cancelled = false
         output = ""
         startTime = Date()
-        var functionCallCount = 0
-        let maxCalls = appSettings?.maxFunctionCalls ?? 3
         
         defer {
             running = false
@@ -629,7 +626,7 @@ class RunLLM: ObservableObject {
         
         do {
             let modelContainer = try await load(modelName: modelName)
-            var currentMessages = modelContainer.configuration.getPromptHistory(
+            let currentMessages = modelContainer.configuration.getPromptHistory(
                 thread: thread,
                 systemPrompt: systemPrompt
             )
@@ -640,83 +637,19 @@ class RunLLM: ObservableObject {
             }
             print("isThinking: \(isThinking)")
 
-            // Initial generation
-            print("Starting initial text generation")
-            let initialOutput = try await generateText(modelContainer: modelContainer, messages: currentMessages)
-            print("Model output: \(initialOutput)")
-            output = initialOutput
+            // Generate text
+            print("Starting text generation")
+            let generatedOutput = try await generateText(modelContainer: modelContainer, messages: currentMessages)
+            print("Model output: \(generatedOutput)")
+            output = generatedOutput
             
-            // Check for tool calls
-            guard let toolCalls = extractToolCalls(from: initialOutput), !toolCalls.isEmpty else {
-                print("No tool calls detected")
-                return GenerateResult(initialOutput: initialOutput, toolMessages: [], finalOutput: "")
-            }
+            return generatedOutput
             
-            print("Detected \(toolCalls.count) tool calls")
-            
-            // Execute tools in parallel and collect results
-            var toolResults: [String: String] = [:]
-            
-            try await withThrowingTaskGroup(of: (String, String).self) { group in
-                for toolCall in toolCalls {
-                    guard functionCallCount < maxCalls else {
-                        print("Maximum function call limit reached (\(maxCalls))")
-                        throw RunLLMError.tooManyFunctionCalls
-                    }
-                    
-                    // Check if tool is enabled
-                    let isEnabled = appSettings != nil ? appSettings!.enabledTools.contains(toolCall.name) : true
-                    guard isEnabled else {
-                        print("Tool '\(toolCall.name)' is disabled")
-                        continue
-                    }
-                    
-                    functionCallCount += 1
-                    print("Adding task for tool: \(toolCall.name)")
-                    
-                    group.addTask {
-                        do {
-                            let result = try await self.executeTool(toolCall)
-                            return (toolCall.id, result)
-                        } catch {
-                            let errorMessage = "Error executing tool '\(toolCall.name)': \(error.localizedDescription)"
-                            print(errorMessage)
-                            return (toolCall.id, errorMessage)
-                        }
-                    }
-                }
-                
-                for try await (id, result) in group {
-                    toolResults[id] = result
-                    print("Collected result for tool call \(id)")
-                }
-            }
-            
-            // Create tool messages
-            var toolMessages: [[String: String]] = []
-            for toolCall in toolCalls {
-                if let result = toolResults[toolCall.id] {
-                    print("Adding tool result to conversation for \(toolCall.name)")
-                    let toolMessage = [
-                        "role": "tool", 
-                        "content": result,
-                        "tool_call_id": toolCall.id
-                    ]
-                    toolMessages.append(toolMessage)
-                    currentMessages.append(toolMessage)
-                }
-            }
-            
-            // Generate final response
-            print("Generating final response with tool results")
-            let finalOutput = try await generateText(modelContainer: modelContainer, messages: currentMessages)
-            
-            return GenerateResult(initialOutput: initialOutput, toolMessages: toolMessages, finalOutput: finalOutput)
         } catch {
             let errorMessage = "Generation failed: \(error.localizedDescription)"
             print(errorMessage)
             output = errorMessage
-            return GenerateResult(initialOutput: errorMessage, toolMessages: [], finalOutput: "")
+            return errorMessage
         }
     }
     

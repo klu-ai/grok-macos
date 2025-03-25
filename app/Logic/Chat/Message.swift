@@ -36,14 +36,11 @@ enum Role: String, Codable {
     case assistant
     case user
     case system
-    case tool
 }
 
 /// Defines the types of messages that can be displayed in the chat
 enum MessageType: Codable {
     case text
-    case toolCall(name: String, id: String)
-    case toolResult(toolCallId: String)
 }
 
 @Model
