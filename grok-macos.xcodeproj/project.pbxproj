@@ -85,10 +85,10 @@
 /* Begin PBXFileReference section */
 		361276102D688AB900237A1E /* LoginItemHelper.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LoginItemHelper.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3632A3052D5B414D001B87E1 /* grok.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = grok.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		3695FC9E2D919EF700FB7F00 /* AudioProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioProcessor.swift; sourceTree = "<group>"; };
-		3695FC9F2D919EF700FB7F00 /* WhisperTranscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhisperTranscriptionManager.swift; sourceTree = "<group>"; };
 		3695FCA12D919EF700FB7F00 /* blacklist.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = blacklist.plist; sourceTree = "<group>"; };
 		3695FCA22D919EF700FB7F00 /* whitelist.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = whitelist.plist; sourceTree = "<group>"; };
+		3695FC9E2D919EF700FB7F00 /* AudioProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioProcessor.swift; sourceTree = "<group>"; };
+		3695FC9F2D919EF700FB7F00 /* WhisperTranscriptionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhisperTranscriptionManager.swift; sourceTree = "<group>"; };
 		3695FCA42D919EF700FB7F00 /* ChatViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewModel.swift; sourceTree = "<group>"; };
 		3695FCA52D919EF700FB7F00 /* Message.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Message.swift; sourceTree = "<group>"; };
 		3695FCA62D919EF700FB7F00 /* ThreadManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadManager.swift; sourceTree = "<group>"; };
@@ -162,25 +162,10 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		3612760D2D688AB900237A1E /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		3632A3022D5B414D001B87E1 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				361275F72D65E25000237A1E /* MLXVLM in Frameworks */,
-				362828342D6F05F0007AB857 /* KeyboardShortcuts in Frameworks */,
-				363B43CC2D7C442D00582B4E /* WhisperKit in Frameworks */,
-				361275F92D65E25000237A1E /* StableDiffusion in Frameworks */,
-				363B43C92D7C441400582B4E /* AudioKit in Frameworks */,
-				361275F52D65E25000237A1E /* MLXMNIST in Frameworks */,
-				361275F12D65E25000237A1E /* MLXLLM in Frameworks */,
-				361275F32D65E25000237A1E /* MLXLMCommon in Frameworks */,
 				361275EA2D65DE6D00237A1E /* MarkdownUI in Frameworks */,
 				3612762F2D68B2A000237A1E /* HotKey in Frameworks */,
 			);
@@ -298,9 +283,6 @@
 			isa = PBXGroup;
 			children = (
 				3695FCBF2D919EF700FB7F00 /* Example.swift */,
-				3695FCC02D919EF700FB7F00 /* KokoroSpeechModel.swift */,
-				3695FCC12D919EF700FB7F00 /* SpeechEngine.swift */,
-				3695FCC22D919EF700FB7F00 /* SpeechModel.swift */,
 			);
 			path = Speech;
 			sourceTree = "<group>";
@@ -315,7 +297,6 @@
 				3695FCB22D919EF700FB7F00 /* LLM */,
 				3695FCBA2D919EF700FB7F00 /* Models */,
 				3695FCBE2D919EF700FB7F00 /* Preferences */,
-				3695FCC32D919EF700FB7F00 /* Speech */,
 				3695FCC42D919EF700FB7F00 /* AppSettings.swift */,
 				3695FCC52D919EF700FB7F00 /* OnboardingManager.swift */,
 				3695FCC62D919EF700FB7F00 /* PermissionManager.swift */,
