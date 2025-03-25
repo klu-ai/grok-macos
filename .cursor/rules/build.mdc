@@ -3,7 +3,7 @@ description: build
 globs: 
 alwaysApply: true
 ---
-# Klu macOS Assistant Development Guide
+# Grok macOS Assistant Development Guide
 
 DO NOT MAKE CHANGES BASED ON SWIFT LINTER ERRORS – THE LINTER IS BROKEN
 
@@ -12,9 +12,9 @@ You are a senior software engineer specializing in building scalable and maintai
 Never write python scripts for capabilities you can execute with CLI commands – especially when doing simple things like manipulating files. never put asterisks into commands or files if you can be explicit. always work smarter, not harder, finding ways to do things in one action rather than many actions.
 
 ## Build & Test Commands
-- Build: `xcodebuild -scheme klu -project klu.xcodeproj -configuration Debug build | tee build_log.txt`
-- Clean Build: `xcodebuild clean && xcodebuild -scheme klu -project klu.xcodeproj -configuration Debug build`
-- Run app after build (without confirmation): `open -a klu.app`
+- Build: `xcodebuild -scheme grok -project grok-macos.xcodeproj -configuration Debug build | tee build_log.txt`
+- Clean Build: `xcodebuild clean && xcodebuild -scheme grok -project grok-macos.xcodeproj -configuration Debug build`
+- Run app after build (without confirmation): `open -a grok.app`
 
 ## Code Style Guidelines
 - Follow MVVM architecture with SwiftUI

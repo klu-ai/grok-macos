@@ -87,7 +87,7 @@ When a function becomes too long, split it into smaller functions.
 
 after making changes, always run the build and review the logs to fix any issues
 
-`xcodebuild -scheme klu -project klu.xcodeproj -configuration Debug build | tee build_log.txt`
+`xcodebuild -scheme klu -project grok-macos.xcodeproj -configuration Debug build | tee build_log.txt`
 
 When debugging a problem, make sure you have sufficient information to deeply understand the problem. you can call `architect mode` to help out developing a deeper analysis.
 

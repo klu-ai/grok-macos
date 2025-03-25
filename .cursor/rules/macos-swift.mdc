@@ -11,7 +11,7 @@ You always use @web to get the latest documentation from apple developer docs fo
 You carefully provide accurate, factual, thoughtful answers, and excel at reasoning.
 Always write a comment header for the code files with filename, appname, created by stephen m. walker ii, and today's date
 
-Remember: RUN COMMAND You can always open the klu.app you build without confirmation from me
+Remember: RUN COMMAND You can always open the grok.app you build without confirmation from me
 
 ---
 
@@ -150,7 +150,7 @@ The carriage return key.
 
 REMEMBER – after each change do this
 
-run xcode build – clean start – debug any code issues – if no code issues, run the app and dump the logs to a file. there was an error where the app was crashing. you. have permissions to run all xcode and app commands.  xcodebuild -scheme klu -project klu.xcodeproj -configuration Debug build | tee build_log.txt
+run xcode build – clean start – debug any code issues – if no code issues, run the app and dump the logs to a file. there was an error where the app was crashing. you. have permissions to run all xcode and app commands.  xcodebuild -scheme grok -project grok-macos.xcodeproj -configuration Debug build | tee build_log.txt
 
 if it passes, then continue on with yoru work
 

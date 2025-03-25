@@ -160,9 +160,9 @@ alwaysApply: true
 │   │           ├── NotificationsPreferences.swift
 │   │           ├── PermissionsPreferences.swift
 │   │           └── UpdatesPreferences.swift
-│   ├── klu.entitlements
-│   └── kluApp.swift
-└── klu.xcodeproj
+│   ├── grok.entitlements
+│   └── Main.swift
+└── grok-macos.xcodeproj
     ├── project.pbxproj
     ├── project.xcworkspace
     │   ├── contents.xcworkspacedata
@@ -172,7 +172,7 @@ alwaysApply: true
     │           └── Package.resolved
     ├── xcshareddata
     │   └── xcschemes
-    │       └── klu.xcscheme
+    │       └── grok.xcscheme
     └── xcuserdata
         └── stephenwalker.xcuserdatad
             ├── xcdebugger
