@@ -42,17 +42,19 @@ enum RunLLMError: Error {
     case unknownFunction(String)
     /// Thrown when too many function calls are made in a single conversation
     case tooManyFunctionCalls
+    case apiError(String)
+    case networkError(String)
+    case authenticationError(String)
 }
 
-/// An observable class that manages the lifecycle and interactions with LLM/vision models.
-/// It supports asynchronous text generation, vision-based generation, model switching, and cancellation.
+/// An observable class that manages API-based interactions with LLM services.
 @Observable
 @MainActor
 class RunLLM: ObservableObject {
     // MARK: - State Properties
     
     var running = false
-    var cancelled = false // local flag for UI or external checks
+    var cancelled = false
     var output = ""
     var modelInfo = ""
     var stat = ""
@@ -80,7 +82,16 @@ class RunLLM: ObservableObject {
     var configModel = ModelConfiguration.defaultModel
 
     // Keep a reference to the active generation task so we can cancel it.
-    private var generationTask: Task<MLXLMCommon.GenerateResult, Error>?
+    private var generationTask: Task<String, Error>?
+
+    // API Configuration
+    private var apiKey: String {
+        UserDefaults.standard.string(forKey: "apiKey") ?? ""
+    }
+    
+    private var apiEndpoint: String {
+        UserDefaults.standard.string(forKey: "apiEndpoint") ?? "https://api.example.com"
+    }
 
     // MARK: - Model Management Methods
 
@@ -586,177 +597,72 @@ class RunLLM: ObservableObject {
         activeModelName = nil
     }
 
-    // MARK: - Generation Control Methods
-
-    /// Cancels an ongoing generation by setting a local flag and cancelling the task.
+    // MARK: - API Methods
+    
+    /// Generates a response using the API
+    func generate(thread: Thread, systemPrompt: String) async throws -> String {
+        guard !apiKey.isEmpty else {
+            throw RunLLMError.authenticationError("API key not configured")
+        }
+        
+        startTime = Date()
+        running = true
+        isThinking = true
+        
+        // Create the request body
+        let messages = thread.messages.map { message in
+            [
+                "role": message.role.rawValue,
+                "content": message.content
+            ]
+        }
+        
+        let requestBody: [String: Any] = [
+            "messages": messages,
+            "system": systemPrompt
+        ]
+        
+        // Create the request
+        var request = URLRequest(url: URL(string: apiEndpoint)!)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(for: request)
+            
+            guard let httpResponse = response as? HTTPURLResponse else {
+                throw RunLLMError.networkError("Invalid response")
+            }
+            
+            guard httpResponse.statusCode == 200 else {
+                throw RunLLMError.apiError("API returned status code \(httpResponse.statusCode)")
+            }
+            
+            let responseDict = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+            let content = responseDict?["content"] as? String ?? ""
+            
+            thinkingTime = Date().timeIntervalSince(startTime!)
+            running = false
+            isThinking = false
+            
+            return content
+            
+        } catch {
+            running = false
+            isThinking = false
+            throw RunLLMError.networkError(error.localizedDescription)
+        }
+    }
+    
+    /// Stops the current generation
     func stop() {
+        generationTask?.cancel()
+        running = false
         isThinking = false
         cancelled = true
-        generationTask?.cancel()
     }
-
-    /// Structured result of the generation process, separating initial output, tool messages, and final output.
-    struct GenerateResult {
-        let initialOutput: String
-        let toolMessages: [[String: String]]
-        let finalOutput: String
-    }
-
-    /// Generates text asynchronously using the specified model, thread context, and system prompt.
-    /// Returns a structured result with initial output, tool messages, and final response.
-    /// - Parameters:
-    ///   - modelName: The name of the model to use.
-    ///   - thread: The conversation thread providing prompt history.
-    ///   - systemPrompt: The system-level prompt to augment generation.
-    /// - Returns: A GenerateResult containing the generation components.
-    func generate(modelName: String, thread: Thread, systemPrompt: String) async -> String {
-        guard !running else { return "" }
-        running = true
-        cancelled = false
-        output = ""
-        startTime = Date()
-        
-        defer {
-            running = false
-            isThinking = false
-            if let startTime = startTime {
-                thinkingTime = Date().timeIntervalSince(startTime)
-            }
-        }
-        
-        do {
-            let modelContainer = try await load(modelName: modelName)
-            let currentMessages = modelContainer.configuration.getPromptHistory(
-                thread: thread,
-                systemPrompt: systemPrompt
-            )
-            
-            print("isThinking: \(isThinking)")
-            if modelContainer.configuration.modelType == .reasoning || modelContainer.configuration.modelType == .regular {
-                isThinking = true
-            }
-            print("isThinking: \(isThinking)")
-
-            // Generate text
-            print("Starting text generation")
-            let generatedOutput = try await generateText(modelContainer: modelContainer, messages: currentMessages)
-            print("Model output: \(generatedOutput)")
-            output = generatedOutput
-            
-            return generatedOutput
-            
-        } catch {
-            let errorMessage = "Generation failed: \(error.localizedDescription)"
-            print(errorMessage)
-            output = errorMessage
-            return errorMessage
-        }
-    }
-    
-    // MARK: - Vision Generation
-    
-    /// Generates output using a vision-capable model by combining a text prompt with an optional image or video.
-    /// Uses the pixtral_12b_4bit model for image/video comprehension.
-    ///
-    /// - Parameters:
-    ///   - prompt: The text prompt to guide generation.
-    ///   - image: An optional CIImage to provide visual context.
-    ///   - videoURL: An optional URL to a video file for visual context.
-    func vision(prompt: String, image: CIImage? = nil, videoURL: URL? = nil) async {
-        guard !running else { return }
-        running = true
-        cancelled = false
-        output = ""
-        startTime = Date()
-        
-        defer {
-            running = false
-            isThinking = false
-        }
-        
-        do {
-            let modelContainer = try await load(modelName: VisionModels.defaultModel)
-            
-            if modelContainer.configuration.modelType == ModelConfiguration.ModelType.vision {
-                isThinking = true
-            }
-            
-            MLXRandom.seed(UInt64(Date.timeIntervalSinceReferenceDate * 1000))
-            
-            // Convert image and videoURL to [UserInput.Image]
-            let imageObjects: [UserInput.Image] = {
-                var imgs = [UserInput.Image]()
-                if let img = image {
-                    imgs.append(.ciImage(img))
-                }
-                if let videoURL = videoURL {
-                    imgs.append(.url(videoURL))
-                }
-                return imgs
-            }()
-            
-            // Define processing (adjust size as needed based on your model)
-            let processing = UserInput.Processing(resize: CGSize(width: 448, height: 448))
-            
-            // Create UserInput with text prompt and images
-            let userInput = UserInput(prompt: .text(prompt), images: imageObjects, processing: processing)
-            
-            // Create a local copy to avoid Swift 6 concurrency capture issues
-            let localUserInput = userInput
-            
-            generationTask = Task {
-                let result = try await modelContainer.perform { context in
-                    let input = try await context.processor.prepare(input: localUserInput)
-                    var lastTokenCount = 0
-                    
-                    return try MLXLMCommon.generate(
-                        input: input,
-                        parameters: self.generateParameters,
-                        context: context,
-                        didGenerate: { tokens in
-                            if Task.isCancelled {
-                                return .stop
-                            }
-                            if tokens.count >= self.maxTokens {
-                                return .stop
-                            }
-                            if tokens.count % self.displayEveryNTokens == 0 {
-                                let newTokens = Array(tokens[lastTokenCount..<tokens.count])
-                                lastTokenCount = tokens.count
-                                let partialText = context.tokenizer.decode(tokens: newTokens)
-                                Task { @MainActor in
-                                    self.output += partialText
-                                }
-                            }
-                            return .more
-                        }
-                    )
-                }
-                
-                if result.output != self.output {
-                    self.output = result.output
-                }
-                self.stat = " Tokens/second: \(String(format: "%.3f", result.tokensPerSecond))"
-                return result
-            }
-            
-            _ = try await generationTask!.value
-        } catch {
-            output = "Failed: \(error)"
-        }
-    }
-
-    // MARK: - Tool Implementation Methods
-    
-    // The implementation of tool methods has been moved to FunctionCalls.swift
-    // This includes:
-    // - transcribeAudio(audioPath:)
-    // - analyzeImage(imagePath:)
-    // - performReasoning(problem:)
-    // - extractToolCalls(from:)
-    // - ToolCall struct definition
-    // - executeTool(_:)
-    // - generateText(modelContainer:messages:)
 }
 
 extension RunLLM.LoadState {

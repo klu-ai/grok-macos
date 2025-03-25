@@ -45,89 +45,30 @@ import MLXLMCommon
 
 struct ModelsPreferences: View {
     @EnvironmentObject var appSettings: AppSettings
-    @EnvironmentObject var runLLM: RunLLM
-    @AppStorage("selectedCoreModel") private var selectedCoreModel = CoreModels.defaultModel
-    @AppStorage("selectedReasoningModel") private var selectedReasoningModel = ReasoningModels.defaultModel
-    @AppStorage("selectedVisionModel") private var selectedVisionModel = VisionModels.defaultModel
-    @AppStorage("selectedAudioModel") private var selectedAudioModel = AudioModels.defaultModel
-    @AppStorage("selectedEmbeddingModel") private var selectedEmbeddingModel = EmbeddingModels.defaultModel
-    @AppStorage("selectedRuntime") private var selectedRuntime = "mlx"
+    @AppStorage("apiKey") private var apiKey: String = ""
+    @AppStorage("apiEndpoint") private var apiEndpoint: String = "https://api.example.com"
     
     var body: some View {
         Form {
-            let coreModels = ModelRegistry.shared.getModels(for: .core).sorted { $0.lab < $1.lab }
-            let reasoningModels = ModelRegistry.shared.getModels(for: .reasoning).sorted { $0.lab < $1.lab }
-            let visionModels = ModelRegistry.shared.getModels(for: .vision).sorted { $0.lab < $1.lab }
-            let audioModels = ModelRegistry.shared.getModels(for: .audio).sorted { $0.lab < $1.lab }
-            let embeddingModels = ModelRegistry.shared.getModels(for: .embedding).sorted { $0.lab < $1.lab }
-            
-            // Core Language Model Section
-            Section("Core Language Models") {
-                ModelPickerView(models: coreModels, selectedModel: $selectedCoreModel)
-                    .onChange(of: selectedCoreModel) { oldValue, newValue in
-                        if coreModels.first(where: { $0.name == newValue }) != nil {
-                             Task { await handleModelSelection(newValue) }
-                        }
-                    }
-                ModelTypeListView(
-                    models: coreModels,
-                    installedModels: $appSettings.installedModels
-                )
+            Section("API Configuration") {
+                SecureField("API Key", text: $apiKey)
+                    .textFieldStyle(.roundedBorder)
+                TextField("API Endpoint", text: $apiEndpoint)
+                    .textFieldStyle(.roundedBorder)
             }
             
-            // Reasoning Model Section
-            Section("Reasoning Models") {
-                ModelPickerView(models: reasoningModels, selectedModel: $selectedReasoningModel)
-                ModelTypeListView(
-                    models: reasoningModels,
-                    installedModels: $appSettings.installedModels
-                )
-            }
-            
-            // Vision Model Section
-            Section("Vision Models") {
-                ModelPickerView(models: visionModels, selectedModel: $selectedVisionModel)
-                ModelTypeListView(
-                    models: visionModels,
-                    installedModels: $appSettings.installedModels
-                )
-            }
-            
-            // Audio Model Section
-            Section("Audio Models") {
-                ModelPickerView(models: audioModels, selectedModel: $selectedAudioModel)
-                ModelTypeListView(
-                    models: audioModels,
-                    installedModels: $appSettings.installedModels
-                )
-            }
-            
-            // Embedding Model Section
-            Section("Embedding Models") {
-                ModelPickerView(models: embeddingModels, selectedModel: $selectedEmbeddingModel)
-                ModelTypeListView(
-                    models: embeddingModels,
-                    installedModels: $appSettings.installedModels
-                )
+            Section("Model Settings") {
+                Text("Using API-based model inference")
+                    .foregroundColor(.secondary)
             }
         }
         .formStyle(.grouped)
     }
-    
-    private func handleModelSelection(_ selectedModelName: String) async {
-        if let modelConfig = ModelConfiguration.getModelByName(selectedModelName) {
-            await runLLM.switchModel(modelConfig)
+}
 
-            if appSettings.installedModels.contains(selectedModelName) {
-                print("Model is already installed: \(selectedModelName)")
-            } else {
-                print("Model is not installed yet: \(selectedModelName)")
-            }
-        } else {
-            print("Could not find model configuration for: \(selectedModelName)")
-        }
-    }
-
+#Preview {
+    ModelsPreferences()
+        .environmentObject(AppSettings())
 }
 
 // MARK: - Model Type List View
@@ -445,11 +386,5 @@ struct ModelPickerView: View {
             }
         }
         .padding(.vertical, 4)
-    }
-}
-
-struct ModelsPreferences_Previews: PreviewProvider {
-    static var previews: some View {
-        ModelsPreferences()
     }
 }

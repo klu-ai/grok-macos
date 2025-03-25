@@ -83,17 +83,12 @@ class ChatViewModel: ObservableObject {
         
         // Generate LLM response asynchronously
         Task {
-            let modelName = UserDefaults.standard.string(forKey: "selectedCoreModel") ?? CoreModels.defaultModel
-            print("selectedCoreModel from UserDefaults: \(UserDefaults.standard.string(forKey: "selectedCoreModel") ?? "nil")")
-            print("CoreModels.defaultModel: \(CoreModels.defaultModel)")
-            print("modelName: \(modelName)")
-            
             // Use appSettings instance to get system prompt
             let systemPrompt = await MainActor.run {
                 appSettings.getSystemPrompt()
             }
             
-            let result = await runLLM.generate(modelName: modelName, thread: thread, systemPrompt: systemPrompt)
+            let result = await runLLM.generate(thread: thread, systemPrompt: systemPrompt)
             
             // Update UI on main thread in a single operation
             await MainActor.run {

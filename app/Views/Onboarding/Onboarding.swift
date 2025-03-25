@@ -7,31 +7,26 @@
 //  Description:
 //  Main onboarding coordinator view that manages the step-by-step introduction
 //  to the application. Implements a guided setup process with multiple steps
-//  to configure essential settings and permissions.
+//  to configure essential settings.
 //
 //  Key features:
 //  - Multi-step onboarding flow
 //  - Progress tracking
-//  - Permission management
-//  - UI tour integration
+//  - Basic app configuration
 //
 //  Onboarding steps:
 //  1. Welcome: Initial greeting and overview
-//  2. Model Selection: Choose a model
-//  3. Permissions: System access setup
-//  4. Preferences: Basic app configuration
-//  5. Finished: Completion and next steps
+//  2. Preferences: Basic app configuration
+//  3. Finished: Completion and next steps
 //
 //  Implementation notes:
 //  - Uses TabView for step navigation
 //  - Manages step completion state
-//  - Handles permission requests
 //  - Saves preferences
 //
 //  Dependencies:
 //  - OnboardingManager: State management
 //  - Individual step views
-//  - System permission APIs
 //
 //  Usage:
 //  - Shown on first launch
@@ -41,8 +36,6 @@
 //
 
 import SwiftUI
-import MLXLMCommon
-import Models
 
 /// The main container view for the onboarding process.
 struct Onboarding: View {
@@ -99,6 +92,10 @@ struct Onboarding: View {
         }
         .frame(minWidth: 520, minHeight: 600)
     }
+}
+
+#Preview {
+    Onboarding()
 }
 
 // MARK: - Preview Provider

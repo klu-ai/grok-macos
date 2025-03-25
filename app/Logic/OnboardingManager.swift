@@ -53,9 +53,6 @@ class OnboardingManager: ObservableObject {
     /// Progress through the onboarding steps (0.0 to 1.0)
     @Published private(set) var progress: Double = 0.0
     
-    /// The selected core model name
-    @Published var selectedCoreModel: String = ModelRegistry.shared.getDefaultModel(for: .core)
-    
     // MARK: - Private Properties
     
     /// UserDefaults key for storing onboarding progress

@@ -25,6 +25,51 @@ import Foundation
 import MLXLMCommon
 import Models
 
+/// Configuration for API-based model inference
+public struct ModelConfiguration {
+    /// The name of the model to use for API requests
+    public let name: String
+    
+    /// The type of model (text, vision, etc.)
+    public let type: ModelType
+    
+    /// The model's capabilities and parameters
+    public let parameters: [String: Any]
+    
+    /// Enumeration for distinguishing between different model types
+    public enum ModelType: String {
+        case text
+        case vision
+        case audio
+        case embedding
+    }
+    
+    /// Constructs the prompt history for a given conversation thread
+    /// - Parameters:
+    ///   - thread: The conversation thread containing sorted messages
+    ///   - systemPrompt: The system-level prompt to set the conversation context
+    /// - Returns: An array of dictionaries, each representing a message with a "role" and "content"
+    func getPromptHistory(thread: Thread, systemPrompt: String) -> [[String: String]] {
+        var history: [[String: String]] = []
+        
+        // Append the system prompt as the initial context
+        history.append([
+            "role": "system",
+            "content": systemPrompt,
+        ])
+        
+        // Append each message from the thread
+        for message in thread.sortedMessages {
+            history.append([
+                "role": message.role.rawValue,
+                "content": message.content
+            ])
+        }
+        
+        return history
+    }
+}
+
 // MARK: - Model Configuration Extensions for LLM Inference
 public extension ModelConfiguration {
     /// Enumeration for distinguishing between regular and reasoning LLM model types.
@@ -112,35 +157,6 @@ extension ModelConfiguration: @retroactive Equatable {
         } else {
             return nil
         }
-    }
-
-    /// Constructs the prompt history for a given conversation thread.
-    ///
-    /// This history includes the system prompt followed by formatted user and assistant messages.
-    ///
-    /// - Parameters:
-    ///   - thread: The conversation thread containing sorted messages.
-    ///   - systemPrompt: The system-level prompt to set the conversation context.
-    /// - Returns: An array of dictionaries, each representing a message with a "role" and "content".
-    func getPromptHistory(thread: Thread, systemPrompt: String) -> [[String: String]] {
-        var history: [[String: String]] = []
-
-        // Append the system prompt as the initial context.
-        history.append([
-            "role": "system",
-            "content": systemPrompt,
-        ])
-
-        // Append each formatted message from the thread.
-        for message in thread.sortedMessages {
-            let role = message.role.rawValue
-            history.append([
-                "role": role,
-                "content": formatForTokenizer(message.content), // Format messages to remove think tags and adjust spacing.
-            ])
-        }
-
-        return history
     }
 
     /// Formats a message string for proper tokenization.
