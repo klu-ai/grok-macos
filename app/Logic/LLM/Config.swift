@@ -1,29 +1,23 @@
 //
 //  Config.swift
-//  MLX model configuration extensions
+//  Grok macOS assistant
 //
 //  Created by Stephen M. Walker II on 2/19/25.
 //
 //  Description:
-//  This file provides extensions to the ModelConfiguration type for LLM inference functionality.
-//  It defines model types (regular vs reasoning) and adds utility functions for constructing
-//  prompt histories and formatting messages for tokenization. It also supplies predefined model
-//  configurations and retroactive Equatable conformance for comparing configurations by name.
-//  These utilities support proper formatting and processing of LLM prompts and responses.
+//  This file provides configuration types and utilities for API-based model inference.
+//  It defines model types and adds utility functions for constructing prompt histories
+//  and managing model configurations.
 //
 //  Usage:
-//  - Import this file to access LLM inference utilities.
-//  - Use getPromptHistory(thread:systemPrompt:) to build a prompt history array for LLM input.
-//  - Use formatForTokenizer(_:) to format messages appropriately for tokenization.
-//  - Access predefined configurations and model size information via the provided static properties.
+//  - Import this file to access model configuration utilities
+//  - Use getPromptHistory(thread:systemPrompt:) to build a prompt history array
+//  - Access predefined configurations via the provided static properties
 //
 //  Dependencies:
-//  - Foundation: Provides core functionality.
-
+//  - Foundation: Core functionality
 
 import Foundation
-
-
 
 /// Configuration for API-based model inference
 public struct ModelConfiguration {
@@ -95,6 +89,15 @@ public struct ModelConfiguration {
                 "max_tokens": 4096
             ]
         )
+    }
+    
+    /// Formats a message string for proper tokenization
+    /// - Parameter message: The original message string
+    /// - Returns: The formatted message string
+    func formatForTokenizer(_ message: String) -> String {
+        return message
+            .replacingOccurrences(of: "<think>", with: "")
+            .replacingOccurrences(of: "</think>", with: "")
     }
 }
 
@@ -169,23 +172,6 @@ extension ModelConfiguration: @retroactive Equatable {
     public static var availableModels: [ModelConfiguration] = {
         return coreModels + reasoningModels + visionModels + audioModels + embeddingModels
     }()
-
-    /// Formats a message string for proper tokenization.
-    ///
-    /// Removes any "<think>" and "</think>" tags and prepends a space if the model requires reasoning formatting.
-    ///
-    /// - Parameter message: The original message string.
-    /// - Returns: The formatted message string suitable for the tokenizer.
-    // TODO: Remove this function when Jinja gets updated
-    func formatForTokenizer(_ message: String) -> String {
-        if self.modelType == .reasoning || self.modelType == .regular {
-            return " " + message
-                .replacingOccurrences(of: "<think>", with: "")
-                .replacingOccurrences(of: "</think>", with: "")
-        }
-        
-        return message
-    }
 
     /// Calculates and returns the model's approximate size in gigabytes (GB).
     ///
