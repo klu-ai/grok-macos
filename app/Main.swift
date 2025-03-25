@@ -48,7 +48,7 @@ struct grokApp: App {
     @StateObject private var runLLM = RunLLM()
     
     /// Shared OnboardingManager instance for managing onboarding state
-    @StateObject private var onboardingManager = OnboardingManager()
+    @StateObject private var onboardingManager = OnboardingManager.shared
     
     /// Shared WindowManager instance for managing window state
     @StateObject private var windowManager = WindowManager()
@@ -84,9 +84,8 @@ struct grokApp: App {
         // Initialize AppSettings
         self._appSettings = StateObject(wrappedValue: AppSettings())
         
-        // Create runLLMInstance with AppManager reference
+        // Create runLLMInstance
         let runLLMInstance = RunLLM()
-        runLLMInstance.appSettings = appSettings
         self._runLLM = StateObject(wrappedValue: runLLMInstance)
         
         // Extract modelContext as a local constant
@@ -193,7 +192,7 @@ struct grokApp: App {
         
         // Provide a MenuBarExtra (if enabled in AppStorage)
         MenuBarExtra(isInserted: Binding(get: { true }, set: { _ in })) {
-            MenuBar()
+            MenuBarContentView()
                 .modelContainer(container)
                 .environmentObject(appSettings)
                 .environmentObject(runLLM)
