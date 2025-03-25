@@ -5,48 +5,37 @@
 //  Created by Stephen M. Walker II on 2/12/25.
 //
 //  Description:
-//  Manages AI model selection and configuration preferences for different tasks.
-//  Provides a comprehensive interface for selecting and managing various AI models
-//  while monitoring system resources and memory constraints.
+//  Manages API configuration and model preferences for the Grok assistant.
+//  Provides an interface for configuring API settings and model parameters.
 //
 //  Key features:
-//  - Model selection for different capabilities:
-//    * Core language processing
-//    * Reasoning and decision making
-//    * Vision and image processing
-//    * Audio and speech processing
-//    * Text embeddings
-//  - Runtime environment selection
-//  - Memory usage monitoring
-//  - Resource estimation
+//  - API configuration (endpoint and key)
+//  - Model parameter settings
+//  - Runtime environment configuration
 //
 //  Implementation notes:
 //  - Uses AppStorage for persistent preferences
-//  - Implements real-time memory monitoring
-//  - Calculates estimated model memory requirements
-//  - Provides model compatibility checks
+//  - Implements secure storage for API keys
+//  - Provides model configuration options
 //
 //  Dependencies:
-//  - CoreModels: Core language model definitions
-//  - ReasoningModels: Reasoning model definitions
-//  - VisionModels: Vision model definitions
-//  - AudioModels: Audio model definitions
-//  - EmbeddingModels: Embedding model definitions
+//  - SwiftUI: UI framework
+//  - Foundation: Core functionality
 //
 //  Usage:
-//  - Select models for different capabilities
-//  - Monitor memory usage and constraints
-//  - Configure runtime environments
-//  - View model specifications and requirements
-//
+//  - Configure API settings
+//  - Set model parameters
+//  - View and modify runtime settings
 
 import SwiftUI
-import MLXLMCommon
 
 struct ModelsPreferences: View {
     @EnvironmentObject var appSettings: AppSettings
     @AppStorage("apiKey") private var apiKey: String = ""
     @AppStorage("apiEndpoint") private var apiEndpoint: String = "https://api.example.com"
+    @AppStorage("selectedModel") private var selectedModel: String = "grok-3"
+    @AppStorage("temperature") private var temperature: Double = 0.7
+    @AppStorage("maxTokens") private var maxTokens: Int = 4096
     
     var body: some View {
         Form {
@@ -58,6 +47,21 @@ struct ModelsPreferences: View {
             }
             
             Section("Model Settings") {
+                Picker("Model", selection: $selectedModel) {
+                    Text("Grok-3").tag("grok-3")
+                    Text("Grok-2").tag("grok-2")
+                    Text("Grok-1").tag("grok-1")
+                }
+                
+                VStack(alignment: .leading) {
+                    Text("Temperature: \(String(format: "%.1f", temperature))")
+                    Slider(value: $temperature, in: 0...2, step: 0.1)
+                }
+                
+                Stepper("Max Tokens: \(maxTokens)", value: $maxTokens, in: 1...8192, step: 256)
+            }
+            
+            Section {
                 Text("Using API-based model inference")
                     .foregroundColor(.secondary)
             }
