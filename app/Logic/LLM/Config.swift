@@ -101,86 +101,15 @@ public struct ModelConfiguration {
     }
 }
 
-// MARK: - Model Configuration Extensions for LLM Inference
-public extension ModelConfiguration {
-    /// Enumeration for distinguishing between regular and reasoning LLM model types.
-    enum ModelType {
-        case regular, reasoning, vision
-    }
-
-    /// Determines the type of the model based on its configuration.
-    ///
-    /// - Returns: `.reasoning` for reasoning models, `.vision` for vision models, otherwise `.regular`.
-    var modelType: ModelType {
-        if Self.reasoningModels.contains(where: { $0.name == self.name }) {
-            return .reasoning
-        } else if Self.visionModels.contains(where: { $0.name == self.name }) {
-            return .vision
-        } else {
-            return .regular
-        }
-    }
-    
-    /// Extracts the repository ID string from the model configuration.
-    /// - Returns: The repository ID string used for downloading the model.
-    var repoId: String {
-        get async {
-            switch id {
-            case .id(let modelId):
-                return "huggingface.co/\(modelId)" // Prepend huggingface.co/ to mlx value
-            case .directory:
-                // This should never happen for our predefined models, but we need to handle it
-                fatalError("Directory-based identifiers not supported for downloads")
-            }
-        }
-    }
-}
-
-// MARK: - Equatable Conformance and Predefined Model Configurations
-extension ModelConfiguration: @retroactive Equatable {
-    /// Creates a ModelConfiguration from a Model instance.
-    public static func configurationFromModel(_ model: Model) -> ModelConfiguration {
-        return ModelConfiguration(id: model.mlx)
-    }
-
+// MARK: - Equatable Conformance
+extension ModelConfiguration: Equatable {
     /// Compares two model configurations based on their names.
     ///
     /// - Parameters:
     ///   - lhs: The first model configuration.
     ///   - rhs: The second model configuration.
     /// - Returns: `true` if both configurations have the same name; otherwise, `false`.
-    public static func == (lhs: MLXLMCommon.ModelConfiguration, rhs: MLXLMCommon.ModelConfiguration) -> Bool {
+    public static func == (lhs: ModelConfiguration, rhs: ModelConfiguration) -> Bool {
         return lhs.name == rhs.name
-    }
-
-    /// Array of core language model configurations.
-    public static let coreModels: [ModelConfiguration] = CoreModels.available.map { configurationFromModel($0) }
-
-    /// Array of reasoning model configurations.
-    public static let reasoningModels: [ModelConfiguration] = ReasoningModels.available.map { configurationFromModel($0) }
-
-    /// Array of vision model configurations.
-    public static let visionModels: [ModelConfiguration] = VisionModels.available.map { configurationFromModel($0) }
-
-    /// Array of audio model configurations.
-    public static let audioModels: [ModelConfiguration] = AudioModels.available.map { configurationFromModel($0) }
-
-    /// Array of embedding model configurations.
-    public static let embeddingModels: [ModelConfiguration] = EmbeddingModels.available.map { configurationFromModel($0) }
-
-    /// An array containing all available model configurations.
-    public static var availableModels: [ModelConfiguration] = {
-        return coreModels + reasoningModels + visionModels + audioModels + embeddingModels
-    }()
-
-    /// Calculates and returns the model's approximate size in gigabytes (GB).
-    ///
-    /// - Returns: A Decimal value representing the model size in GB, or `nil` if not defined.
-    public var modelSize: Decimal? {
-        let allModels = CoreModels.available + ReasoningModels.available + VisionModels.available + AudioModels.available + EmbeddingModels.available
-        if let model = allModels.first(where: { $0.name == self.name }) {
-            return Decimal(model.size) / Decimal(1024 * 1024 * 1024)
-        }
-        return nil
     }
 }
