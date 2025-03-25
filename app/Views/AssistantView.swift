@@ -50,6 +50,9 @@ struct AssistantView: View {
     /// Reference to WindowManager for sidebar state persistence
     @ObservedObject private var windowManager = WindowManager.shared
     
+    /// Environment object for managing onboarding.
+    @EnvironmentObject var onboardingManager: OnboardingManager
+    
     /// The body of the AssistantView, defining the user interface and behavior.
     var body: some View {
         ZStack {
@@ -110,5 +113,15 @@ struct AssistantView: View {
             }
         }
         .preferredColorScheme(appSettings.preferredColorScheme)
+    }
+}
+
+struct AssistantView_Previews: PreviewProvider {
+    static var previews: some View {
+        AssistantView(currentThread: .constant(nil), viewModel: ChatViewModel())
+            .environmentObject(AppSettings())
+            .environmentObject(RunLLM())
+            .environmentObject(OnboardingManager())
+            .environmentObject(WindowManager())
     }
 }

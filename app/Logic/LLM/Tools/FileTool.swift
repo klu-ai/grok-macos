@@ -211,4 +211,14 @@ extension RunLLM {
         
         return result
     }
+    
+    /// Checks if the file exists at the given path
+    private func fileExists(at path: String) -> Bool {
+        return FileManager.default.fileExists(atPath: path)
+    }
+    
+    /// Checks if we have read access to the file
+    private func canReadFile(at path: String) -> Bool {
+        return FileManager.default.isReadableFile(atPath: path)
+    }
 } 
