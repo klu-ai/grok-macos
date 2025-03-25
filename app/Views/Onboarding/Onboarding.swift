@@ -1,6 +1,6 @@
 //
 //  Onboarding.swift
-// Grok macOS assistant
+//  Grok macOS assistant
 //
 //  Created by Stephen M. Walker II on 2/12/25.
 //
@@ -58,10 +58,6 @@ struct Onboarding: View {
                 switch onboardingManager.currentStep {
                 case .welcome:
                     Welcome()
-                case .modelSelection:
-                    ModelSelection(onboardingManager: onboardingManager, appSettings: appSettings)
-                case .permissions:
-                    SetupPermissions()
                 case .preferences:
                     AppPreferences()
                 case .completion:
@@ -92,51 +88,16 @@ struct Onboarding: View {
                     .buttonStyle(.borderedProminent)
                 } else {
                     Button("Continue") {
-                        if onboardingManager.currentStep == .modelSelection {
-                            Task {
-                                await handleModelSelection()
-                            }
-                        } else {
-                            withAnimation {
-                                onboardingManager.advanceToNextStep()
-                            }
+                        withAnimation {
+                            onboardingManager.advanceToNextStep()
                         }
                     }
                     .buttonStyle(.borderedProminent)
-                    //.disabled(onboardingManager.currentStep == .modelSelection && onboardingManager.selectedCoreModel.isEmpty)
                 }
             }
             .padding()
         }
         .frame(minWidth: 520, minHeight: 600)
-    }
-    
-    private func handleModelSelection() async {
-        let selectedModelName = onboardingManager.selectedCoreModel
-        
-        if let modelConfig = ModelConfiguration.getModelByName(selectedModelName) {
-            print("Selected model: \(selectedModelName)")
-            print("Model config: \(modelConfig)")
-            
-            // Store the selected model in AppSettings
-            appSettings.currentModelName = selectedModelName
-            
-            // Add to installed models list if it's already downloaded
-            // but don't download it now - this will happen when needed
-            if appSettings.installedModels.contains(selectedModelName) {
-                print("Model is already installed: \(selectedModelName)")
-            } else {
-                print("Model is not installed yet: \(selectedModelName)")
-                // We'll download it later when actually needed
-            }
-            
-            // Continue to the next step immediately
-            await MainActor.run {
-                onboardingManager.advanceToNextStep()
-            }
-        } else {
-            print("Could not get model config for: \(selectedModelName)")
-        }
     }
 }
 

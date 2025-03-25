@@ -147,11 +147,8 @@ class OnboardingManager: ObservableObject {
 /// Defines the steps in the onboarding process
 enum OnboardingStep: Int, CaseIterable {
     case welcome = 0
-    case modelSelection = 1
-    case permissions = 2
-    case preferences = 3
-    //case uiTour
-    case completion = 4
+    case preferences = 1
+    case completion = 2
     
     static var totalSteps: Int { Self.allCases.count }
     
@@ -159,14 +156,8 @@ enum OnboardingStep: Int, CaseIterable {
         switch self {
         case .welcome:
             return "Welcome to Grok"
-        case .modelSelection:
-            return "Choose AI Model"
-        case .permissions:
-            return "Setup Permissions"
         case .preferences:
             return "Basic Preferences"
-        //case .uiTour:
-          //  return "Quick Tour"
         case .completion:
             return "All Set!"
         }
@@ -176,14 +167,8 @@ enum OnboardingStep: Int, CaseIterable {
         switch self {
         case .welcome:
             return "hand.wave.fill"
-        case .modelSelection:
-            return "cpu"
-        case .permissions:
-            return "lock.shield"
         case .preferences:
             return "gearshape.fill"
-        //case .uiTour:
-          //  return "rectangle.inset.filled.and.person.filled"
         case .completion:
             return "checkmark.circle.fill"
         }
