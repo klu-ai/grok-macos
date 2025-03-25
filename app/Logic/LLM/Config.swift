@@ -19,11 +19,11 @@
 //
 //  Dependencies:
 //  - Foundation: Provides core functionality.
-//  - MLXLMCommon: Supplies shared definitions and types for LLM model configuration and inference.
+
 
 import Foundation
-import MLXLMCommon
-import Models
+
+
 
 /// Configuration for API-based model inference
 public struct ModelConfiguration {
@@ -67,6 +67,34 @@ public struct ModelConfiguration {
         }
         
         return history
+    }
+    
+    /// The default model configuration used by the system
+    public static var defaultModel: ModelConfiguration {
+        ModelConfiguration(
+            name: "grok-3",
+            type: .text,
+            parameters: [
+                "temperature": 0.7,
+                "max_tokens": 4096
+            ]
+        )
+    }
+    
+    /// Gets a model configuration by name
+    /// - Parameter name: The name of the model to retrieve
+    /// - Returns: The corresponding ModelConfiguration if found, nil otherwise
+    public static func getModelByName(_ name: String) -> ModelConfiguration? {
+        // In a real implementation, this would fetch model configurations from a service
+        // For now, return a default configuration
+        return ModelConfiguration(
+            name: name,
+            type: .text,
+            parameters: [
+                "temperature": 0.7,
+                "max_tokens": 4096
+            ]
+        )
     }
 }
 
@@ -141,23 +169,6 @@ extension ModelConfiguration: @retroactive Equatable {
     public static var availableModels: [ModelConfiguration] = {
         return coreModels + reasoningModels + visionModels + audioModels + embeddingModels
     }()
-
-    /// The default model configuration used by the system.
-    public static var defaultModel: ModelConfiguration {
-        coreModels.first!
-    }
-    /// Retrieves a model configuration based on the provided model name.
-    ///
-    /// - Parameter name: The name of the model.
-    /// - Returns: The corresponding `ModelConfiguration` if it exists; otherwise, `nil`.
-    public static func getModelByName(_ name: String) -> ModelConfiguration? {
-        let allModels = CoreModels.available + ReasoningModels.available + VisionModels.available + AudioModels.available + EmbeddingModels.available
-        if let model = allModels.first(where: { $0.name == name }) {
-            return configurationFromModel(model)
-        } else {
-            return nil
-        }
-    }
 
     /// Formats a message string for proper tokenization.
     ///
