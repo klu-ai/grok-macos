@@ -1,90 +1,67 @@
 //
 //  Run.swift
-//  MLX implementation to run models
+//  Grok macOS assistant
 //
 //  Created by Stephen M. Walker II on 2/19/25.
 //
 //  Description:
-//  This file defines the RunLLM class which manages interactions with LLM and vision models.
-//  It handles model loading, switching between models, asynchronous text/vision generation,
-//  progress tracking, and cancellation of operations.
+//  Manages API-based model inference for the Grok assistant.
+//  Handles API requests, response processing, and error handling.
 //
-//  Usage:
-//  - Use generate(modelName:thread:systemPrompt:) for text-only generation.
-//  - Use vision(prompt:image:videoURL:) for vision-based generation.
-//  - Use switchModel(_:) to change the active model (LLM or VLM).
-//  - Call stop() to cancel an ongoing generation.
-//  - Monitor properties such as output, progress, and stat to update the UI.
+//  Key features:
+//  - API request management
+//  - Response streaming
+//  - Error handling
+//  - State management
 //
 //  Dependencies:
-//  - Requires MLX, MLXLLM, MLXVLM, MLXLMCommon, MLXRandom, and SwiftUI frameworks.
+//  - Foundation: Core functionality
+//  - SwiftUI: UI framework
 //
+//  Usage:
+//  - Initialize with API configuration
+//  - Send requests to model API
+//  - Process streaming responses
+//  - Handle errors and state changes
 
-import MLX
-import MLXLLM
-import MLXVLM
-import MLXLMCommon
-import MLXRandom
-import SwiftUI
-import CoreGraphics // For CGSize
 import Foundation
-import Hub
+import SwiftUI
 
-/// Errors related to RunLLM operations.
+/// Errors that can occur during model inference
 enum RunLLMError: Error {
-    /// Thrown when the specified model cannot be found.
-    case modelNotFound(String)
-    /// Thrown when model memory requirement exceeds guardrails limit
-    case memoryLimitExceeded(String)
-    /// Thrown when an invalid parameter is provided to a tool function
-    case invalidParameters(String)
-    /// Thrown when an unknown function is called
-    case unknownFunction(String)
-    /// Thrown when too many function calls are made in a single conversation
-    case tooManyFunctionCalls
     case apiError(String)
     case networkError(String)
     case authenticationError(String)
 }
 
-/// An observable class that manages API-based interactions with LLM services.
-@Observable
+/// Manages API-based model inference
 @MainActor
 class RunLLM: ObservableObject {
-    // MARK: - State Properties
+    /// Whether a request is currently running
+    @Published var running: Bool = false
     
-    var running = false
-    var cancelled = false
-    var output = ""
-    var modelInfo = ""
-    var stat = ""
-    var progress = 0.0
-    var thinkingTime: TimeInterval?
-    var collapsed: Bool = false
-    var isThinking: Bool = false
+    /// Whether the current request has been cancelled
+    @Published var cancelled: Bool = false
     
-    // active model name
-    var activeModelName: String?
+    /// The current output from the model
+    @Published var output: String = ""
     
-    // Reference to AppSettings for tracking installed models
-    var appSettings: AppSettings?
-
-    /// Returns the elapsed time since the current generation started.
-    var elapsedTime: TimeInterval? {
-        if let startTime {
-            return Date().timeIntervalSince(startTime)
-        }
-        return nil
-    }
-
-    private var startTime: Date?
-
-    var configModel = ModelConfiguration.defaultModel
-
-    // Keep a reference to the active generation task so we can cancel it.
+    /// The current status message
+    @Published var stat: String = ""
+    
+    /// The current progress (0.0 to 1.0)
+    @Published var progress: Double = 0.0
+    
+    /// Time spent thinking/processing
+    @Published var thinkingTime: TimeInterval = 0
+    
+    /// Whether the model is currently thinking
+    @Published var isThinking: Bool = false
+    
+    /// The current generation task
     private var generationTask: Task<String, Error>?
-
-    // API Configuration
+    
+    /// API configuration
     private var apiKey: String {
         UserDefaults.standard.string(forKey: "apiKey") ?? ""
     }
@@ -92,542 +69,43 @@ class RunLLM: ObservableObject {
     private var apiEndpoint: String {
         UserDefaults.standard.string(forKey: "apiEndpoint") ?? "https://api.example.com"
     }
-
-    // MARK: - Model Management Methods
-
-    func switchModel(_ model: ModelConfiguration) async {
-        activeModelName = model.name.replacingOccurrences(of: "mlx-community/", with: "")
-        
-        print("Switching to model: \(activeModelName ?? "unknown model")")
-        
-        progress = 0.0
-        loadState = .idle
-        configModel = model
-        
-        do {
-            if let modelName = activeModelName {
-                _ = try await load(modelName: modelName)
-                // Container is loaded but not used here; keeping for potential future use
-            } else {
-                throw RunLLMError.modelNotFound("Model name is nil")
-            }
-        } catch {
-            print("Error loading model \(activeModelName ?? "unknown model"): \(error)")
-        }
-        
-        activeModelName = nil
-    }
-
-    // MARK: - Generation Parameters
-
-    let generateParameters = GenerateParameters(temperature: 0.789)
-    let maxTokens = 4096
-    let displayEveryNTokens = 4
-
-    // MARK: - Model Loading State
-
-    enum LoadState {
-        case idle
-        case downloading(String) // Tracks the model being downloaded with name
-        case loading(String) // Tracks the model being loaded with name
-        case loaded(ModelContainer)
-    }
-
-    var loadState = LoadState.idle
-
-    // Add MLXModelLoadingProgress type definition
-    struct MLXModelLoadingProgress {
-        let fractionCompleted: Double
-    }
-
-    // Dictionary to store tool functions
-    @ObservationIgnored
-    var toolFunctions: [String: Any] = [:]
-
-    init() {
-        self.running = false
-        self.cancelled = false
-        self.output = ""
-        self.modelInfo = ""
-        self.stat = ""
-        self.progress = 0.0
-        self.thinkingTime = nil
-        self.collapsed = false
-        self.isThinking = false
-        self.activeModelName = nil
-        self.appSettings = nil
-        self.startTime = nil
-        self.configModel = ModelConfiguration.defaultModel
-        self.generationTask = nil
-        self.loadState = .idle
-    }
-
-    /// Checks if a model is fully downloaded by validating required files
-    private func isModelFullyDownloaded(modelName: String, modelConfig: ModelConfiguration) -> Bool {
-        let fileManager = FileManager.default
-        
-        // Get model directory
-        let modelDir = modelConfig.modelDirectory()
-        
-        print("🔍 DEBUG: Checking model files in directory: \(modelDir.path)")
-        
-        // Check if directory exists
-        guard fileManager.fileExists(atPath: modelDir.path) else {
-            print("❌ DEBUG: Model directory does not exist: \(modelDir.path)")
-            return false
-        }
-        
-        // Check directory contents
-        do {
-            let dirContents = try fileManager.contentsOfDirectory(atPath: modelDir.path)
-            print("📂 DEBUG: Directory contents (\(dirContents.count) files):")
-            for file in dirContents.sorted() {
-                let filePath = modelDir.appendingPathComponent(file)
-                let fileAttributes = try fileManager.attributesOfItem(atPath: filePath.path)
-                let fileSize = fileAttributes[.size] as? UInt64 ?? 0
-                let fileSizeMB = Double(fileSize) / (1024 * 1024)
-                print("  - \(file) (\(String(format: "%.2f", fileSizeMB)) MB)")
-            }
-        } catch {
-            print("⚠️ DEBUG: Error listing directory contents: \(error)")
-        }
-        
-        // Check for model.safetensors.index.json file
-        let indexFile = modelDir.appendingPathComponent("model.safetensors.index.json")
-        
-        guard fileManager.fileExists(atPath: indexFile.path) else {
-            print("❌ DEBUG: Index file not found: \(indexFile.path)")
-            return false
-        }
-        
-        do {
-            // Read and parse the index file to get the list of required model files
-            let data = try Data(contentsOf: indexFile)
-            print("📊 DEBUG: Successfully read index file: \(indexFile.lastPathComponent)")
-            
-            if let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] {
-                print("🔑 DEBUG: Index file keys: \(json.keys.joined(separator: ", "))")
-                
-                if let weightMap = json["weight_map"] as? [String: String] {
-                    // Get unique safetensors filenames
-                    let safetensorsFiles = Set(weightMap.values)
-                    
-                    print("📋 DEBUG: Weight map contains \(weightMap.count) entries, mapping to \(safetensorsFiles.count) unique files:")
-                    
-                    // Print sample of weight map (first 5 entries)
-                    let sampleKeys = Array(weightMap.keys.prefix(5))
-                    for key in sampleKeys {
-                        print("  - \"\(key)\" → \"\(weightMap[key] ?? "")\"")
-                    }
-                    
-                    if weightMap.count > 5 {
-                        print("  - ... and \(weightMap.count - 5) more entries")
-                    }
-                    
-                    print("🧩 DEBUG: Required unique safetensors files (\(safetensorsFiles.count)):")
-                    for file in safetensorsFiles.sorted() {
-                        let filePath = modelDir.appendingPathComponent(file)
-                        if fileManager.fileExists(atPath: filePath.path) {
-                            do {
-                                let fileAttributes = try fileManager.attributesOfItem(atPath: filePath.path)
-                                let fileSize = fileAttributes[.size] as? UInt64 ?? 0
-                                let fileSizeMB = Double(fileSize) / (1024 * 1024)
-                                print("  ✅ \(file) (\(String(format: "%.2f", fileSizeMB)) MB)")
-                            } catch {
-                                print("  ✅ \(file) (size unknown: \(error))")
-                            }
-                        } else {
-                            print("  ❌ \(file) (missing)")
-                            return false
-                        }
-                    }
-                    
-                    // Additionally check for tokenizer files
-                    print("🔤 DEBUG: Checking for additional required files:")
-                    let requiredFiles = ["tokenizer.json", "tokenizer_config.json", "special_tokens_map.json"]
-                    var allRequiredFilesExist = true
-                    
-                    for file in requiredFiles {
-                        let filePath = modelDir.appendingPathComponent(file)
-                        if fileManager.fileExists(atPath: filePath.path) {
-                            do {
-                                let fileAttributes = try fileManager.attributesOfItem(atPath: filePath.path)
-                                let fileSize = fileAttributes[.size] as? UInt64 ?? 0
-                                let fileSizeKB = Double(fileSize) / 1024
-                                print("  ✅ \(file) (\(String(format: "%.2f", fileSizeKB)) KB)")
-                            } catch {
-                                print("  ✅ \(file) (size unknown)")
-                            }
-                        } else {
-                            if file == "tokenizer.json" {
-                                print("  ❌ \(file) (missing - required)")
-                                allRequiredFilesExist = false
-                            } else {
-                                print("  ⚠️ \(file) (missing - optional)")
-                            }
-                        }
-                    }
-                    
-                    if !allRequiredFilesExist {
-                        return false
-                    }
-                    
-                    // Check for model config file
-                    let configFile = modelDir.appendingPathComponent("config.json")
-                    if fileManager.fileExists(atPath: configFile.path) {
-                        do {
-                            let fileAttributes = try fileManager.attributesOfItem(atPath: configFile.path)
-                            let fileSize = fileAttributes[.size] as? UInt64 ?? 0
-                            let fileSizeKB = Double(fileSize) / 1024
-                            print("  ✅ config.json (\(String(format: "%.2f", fileSizeKB)) KB)")
-                        } catch {
-                            print("  ✅ config.json (size unknown)")
-                        }
-                    } else {
-                        print("  ⚠️ config.json (missing - optional)")
-                    }
-                    
-                    print("✅ DEBUG: All required model files are present")
-                    return true
-                } else {
-                    print("❌ DEBUG: No 'weight_map' found in index file")
-                }
-            } else {
-                print("❌ DEBUG: Failed to parse index file as JSON")
-            }
-        } catch {
-            print("❌ DEBUG: Error checking model files: \(error)")
-        }
-        
-        return false
-    }
-
-    // MARK: - Memory Check Logic
-    
-    /// Checks if the model's memory requirement exceeds the guardrails limit
-    func checkMemoryBeforeLoading(modelName: String) async throws {
-        print("Starting memory check for model: \(modelName)")
-        
-        // Ensure we have an AppSettings instance
-        if appSettings == nil {
-            appSettings = AppSettings()
-            print("Created new AppSettings instance")
-        }
-        
-        // Skip memory checks entirely if guardrails are set to "Off"
-        if appSettings?.guardrailsLevel == "Off" {
-            print("Guardrails are OFF - skipping memory check")
-            return
-        }
-        
-        print("Current guardrails level: \(appSettings?.guardrailsLevel ?? "Unknown")")
-        
-        guard let modelConfig = ModelConfiguration.getModelByName(modelName) else {
-            print("ERROR: Model not found: \(modelName)")
-            throw RunLLMError.modelNotFound(modelName)
-        }
-        
-        // Get model size in bytes
-        var estimatedMemory: UInt64 = 0
-        
-        if let modelSize = modelConfig.modelSize {
-            // Convert from GB to bytes properly
-            let gigabytes = modelSize as NSDecimalNumber
-            // 1 GB = 1,073,741,824 bytes (2^30)
-            estimatedMemory = UInt64(truncating: gigabytes) * 1_073_741_824
-            print("Model size in GB: \(gigabytes)")
-        } else {
-            print("WARNING: No model size defined for \(modelName)")
-        }
-        
-        let maxAllowedMemory = calculateMaxAllowedMemory()
-        
-        // Add debugging output
-        print("Memory Check Debug:")
-        print("Model: \(modelName)")
-        print("Model Size: \(formatBytes(estimatedMemory))")
-        print("Max Allowed Memory: \(formatBytes(maxAllowedMemory))")
-        
-        if estimatedMemory > maxAllowedMemory {
-            print("ERROR: Memory limit exceeded")
-            throw RunLLMError.memoryLimitExceeded("Model memory requirement (\(formatBytes(estimatedMemory))) exceeds guardrails limit (\(formatBytes(maxAllowedMemory))).")
-        }
-        
-        print("Memory check passed for model: \(modelName)")
-    }
-    
-    /// Calculates the maximum allowed memory based on the guardrails setting
-    private func calculateMaxAllowedMemory() -> UInt64 {
-        let totalMemory = getTotalPhysicalMemory()
-        let currentlyUsedMemory = getCurrentlyUsedMemory()
-        let availableMemory = totalMemory > currentlyUsedMemory ? totalMemory - currentlyUsedMemory : 0
-        let utilizationPercentage = getUtilizationPercentage()
-        let maxAllowedMemory = UInt64(Double(availableMemory) * (utilizationPercentage / 100.0))
-        
-        print("Memory Calculation Debug:")
-        print("Total Memory: \(formatBytes(totalMemory))")
-        print("Currently Used Memory: \(formatBytes(currentlyUsedMemory))")
-        print("Available Memory: \(formatBytes(availableMemory))")
-        print("Utilization Percentage: \(utilizationPercentage)%")
-        print("Max Allowed Memory: \(formatBytes(maxAllowedMemory))")
-        
-        return maxAllowedMemory
-    }
-    
-    /// Retrieves the utilization percentage based on the guardrails level
-    private func getUtilizationPercentage() -> Double {
-        // Ensure we have an AppSettings instance
-        if appSettings == nil {
-            appSettings = AppSettings()
-        }
-        
-        switch appSettings?.guardrailsLevel {
-        case "Off": return 100.0
-        case "Relaxed": return 80.0
-        case "Balanced": return 60.0
-        case "Strict": return 40.0
-        case "Custom": return appSettings?.customMemoryUtilization ?? 50.0
-        default: return 60.0 // Default to Balanced
-        }
-    }
-    
-    /// Gets the total physical memory of the system
-    private func getTotalPhysicalMemory() -> UInt64 {
-        var size = MemoryLayout<UInt64>.size
-        var totalMemory: UInt64 = 0
-        sysctlbyname("hw.memsize", &totalMemory, &size, nil, 0)
-        return totalMemory
-    }
-    
-    /// Gets the currently used system memory
-    private func getCurrentlyUsedMemory() -> UInt64 {
-        let hostPort = mach_host_self()
-        var size = mach_msg_type_number_t(MemoryLayout<vm_statistics64_data_t>.size / MemoryLayout<integer_t>.size)
-        var hostInfo = vm_statistics64_data_t()
-        
-        let pageSize = getPageSize()
-        
-        let result = withUnsafeMutablePointer(to: &hostInfo) {
-            $0.withMemoryRebound(to: integer_t.self, capacity: Int(size)) {
-                host_statistics64(hostPort, HOST_VM_INFO64, $0, &size)
-            }
-        }
-        
-        if result == KERN_SUCCESS {
-            // Calculate used memory (consider only wired memory as truly "used")
-            let wiredMemory = UInt64(hostInfo.wire_count) * pageSize
-            
-            // Include compressed memory if available
-            let compressedMemory = UInt64(hostInfo.compressor_page_count) * pageSize
-            
-            // For debugging, we'll calculate what the old method would have done
-            let activeMemory = UInt64(hostInfo.active_count) * pageSize
-            let oldCalculation = wiredMemory + activeMemory
-            
-            // New calculation only includes wired + compressed memory
-            let usedMemory = wiredMemory + compressedMemory
-            
-            // Debugging output
-            print("Memory Usage Details:")
-            print("Wired Memory: \(formatBytes(wiredMemory))")
-            print("Compressed Memory: \(formatBytes(compressedMemory))")
-            print("Active Memory (not used in calculation): \(formatBytes(activeMemory))")
-            print("Old Calculation (wired+active): \(formatBytes(oldCalculation))")
-            print("New Calculation (wired+compressed): \(formatBytes(usedMemory))")
-            
-            return usedMemory
-        }
-        
-        // Fallback - if we can't get actual used memory, assume 25% is in use
-        let fallbackMemory = getTotalPhysicalMemory() / 4
-        print("Failed to get memory statistics, using fallback of 25%: \(formatBytes(fallbackMemory))")
-        return fallbackMemory
-    }
-    
-    /// Gets the system page size
-    private func getPageSize() -> UInt64 {
-        var pageSize64: UInt64 = 0
-        var size = MemoryLayout<UInt64>.size
-        sysctlbyname("hw.pagesize", &pageSize64, &size, nil, 0)
-        return pageSize64
-    }
-    
-    /// Formats bytes into a human-readable string
-    private func formatBytes(_ bytes: UInt64) -> String {
-        let formatter = ByteCountFormatter()
-        formatter.countStyle = .binary
-        return formatter.string(fromByteCount: Int64(bytes))
-    }
-
-    /// Loads and returns the model container corresponding to the given model name.
-    /// - Parameter modelName: The name of the model to load (e.g. "pixtral_12b_4bit" for vision).
-    /// - Throws: A RunLLMError.modelNotFound error if the model cannot be located.
-    /// - Returns: A ModelContainer instance representing the loaded model.
-    func load(modelName: String) async throws -> ModelContainer {
-        // Check memory guardrails before loading
-        try await checkMemoryBeforeLoading(modelName: modelName)
-        
-        guard let modelConfig = ModelConfiguration.getModelByName(modelName) else {
-            throw RunLLMError.modelNotFound(modelName)
-        }
-
-        switch loadState {
-        case .idle:
-            // Check if the model is fully downloaded
-            let isFullyDownloaded = isModelFullyDownloaded(modelName: modelName, modelConfig: modelConfig)
-            
-            // Set the appropriate state based on download status
-            if isFullyDownloaded {
-                loadState = .loading(modelName)
-                modelInfo = "Loading \(modelName)..."
-            } else {
-                loadState = .downloading(modelName)
-                modelInfo = "Downloading \(modelName)..."
-            }
-
-            MLX.GPU.set(cacheLimit: 20 * 1024 * 1024)
-            
-            // Print the model directory
-            // Used for debugging model loading issues
-            let modelDir = modelConfig.modelDirectory()
-            print("Model is saved at: \(modelDir.path)")
-
-            // Load the model using the appropriate factory
-            let context = try await {
-                if modelConfig.modelType == .vision {
-                    return try await VLMModelFactory.shared.load(configuration: modelConfig) { progress in
-                        Task { @MainActor in
-                            if case .downloading = self.loadState {
-                                self.modelInfo = "Downloading \(modelConfig.name): \(Int(progress.fractionCompleted * 100))%"
-                            } else {
-                                self.modelInfo = "Loading \(modelConfig.name): \(Int(progress.fractionCompleted * 100))%"
-                            }
-                            self.progress = progress.fractionCompleted
-                        }
-                    }
-                } else {
-                    return try await LLMModelFactory.shared.load(configuration: modelConfig) { progress in
-                        Task { @MainActor in
-                            if case .downloading = self.loadState {
-                                self.modelInfo = "Downloading \(modelConfig.name): \(Int(progress.fractionCompleted * 100))%"
-                            } else {
-                                self.modelInfo = "Loading \(modelConfig.name): \(Int(progress.fractionCompleted * 100))%"
-                            }
-                            self.progress = progress.fractionCompleted
-                        }
-                    }
-                }
-            }()
-            
-            let container = ModelContainer(context: context)
-            let usageMB = MLX.GPU.activeMemory / 1024 / 1024
-            modelInfo = "Loaded \(modelConfig.id). Weights: \(usageMB)M"
-            
-            // Mark model as installed when successfully loaded
-            Task { @MainActor in
-                appSettings?.addInstalledModel(modelName)
-            }
-            
-            loadState = .loaded(container)
-            return container
-            
-        case .downloading, .loading:
-            throw RunLLMError.modelNotFound(modelName)
-            
-        case .loaded(let modelContainer):
-            return modelContainer
-        }
-    }
-
-    /// Downloads a model without loading it into memory.
-    /// - Parameter modelName: The name of the model to download (e.g., "gemma-2-2b-it-4bit").
-    /// - Throws: RunLLMError if the model cannot be found or if the download fails.
-    func downloadModel(modelName: String) async throws {
-        guard let modelConfig = ModelConfiguration.getModelByName(modelName) else {
-            throw RunLLMError.modelNotFound(modelName)
-        }
-        
-        // Check memory guardrails before downloading
-        // no need to check memory before downloading
-        // try await checkMemoryBeforeLoading(modelName: modelName)
-        
-        activeModelName = modelName
-        loadState = .downloading(modelName)
-        modelInfo = "Downloading \(modelName)..."
-        progress = 0.0
-        
-        do {
-            // Check if model is already downloaded
-            if isModelFullyDownloaded(modelName: modelName, modelConfig: modelConfig) {
-                print("Model \(modelName) is already downloaded")
-                appSettings?.addInstalledModel(modelName)
-                loadState = .idle
-                modelInfo = "Model \(modelName) is already downloaded"
-                return
-            }
-            
-            // Create model directory if it doesn't exist
-            let modelDir = modelConfig.modelDirectory()
-            try FileManager.default.createDirectory(at: modelDir, withIntermediateDirectories: true)
-            
-            // Download the model
-            let hub = HubApi()
-            _ = try await MLXLMCommon.downloadModel(hub: hub, configuration: modelConfig) { progress in
-                Task { @MainActor in
-                    self.modelInfo = "Downloading \(modelConfig.name): \(Int(progress.fractionCompleted * 100))%"
-                    self.progress = progress.fractionCompleted
-                }
-            }
-            
-            // Verify the download was successful
-            if isModelFullyDownloaded(modelName: modelName, modelConfig: modelConfig) {
-                appSettings?.addInstalledModel(modelName)
-                loadState = .idle
-                modelInfo = "Download completed for \(modelName)"
-            } else {
-                throw RunLLMError.modelNotFound("Model files are incomplete after download")
-            }
-        } catch {
-            loadState = .idle
-            modelInfo = "Failed to download \(modelName): \(error.localizedDescription)"
-            throw error
-        }
-        
-        // Clear active model name since we're not loading it
-        activeModelName = nil
-    }
-
-    // MARK: - API Methods
     
     /// Generates a response using the API
-    func generate(thread: Thread, systemPrompt: String) async throws -> String {
+    /// - Parameters:
+    ///   - messages: The conversation history
+    ///   - systemPrompt: The system-level prompt
+    /// - Returns: The generated response
+    /// - Throws: RunLLMError if the request fails
+    func generate(messages: [[String: String]], systemPrompt: String) async throws -> String {
         guard !apiKey.isEmpty else {
             throw RunLLMError.authenticationError("API key not configured")
         }
         
-        startTime = Date()
-        running = true
-        isThinking = true
-        
-        // Create the request body
-        let messages = thread.messages.map { message in
-            [
-                "role": message.role.rawValue,
-                "content": message.content
-            ]
+        guard let url = URL(string: apiEndpoint) else {
+            throw RunLLMError.networkError("Invalid API endpoint")
         }
         
-        let requestBody: [String: Any] = [
-            "messages": messages,
-            "system": systemPrompt
-        ]
-        
-        // Create the request
-        var request = URLRequest(url: URL(string: apiEndpoint)!)
+        // Prepare the request
+        var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.setValue("application/json", forHTTPHeaderField: "Content-Type")
         request.setValue("Bearer \(apiKey)", forHTTPHeaderField: "Authorization")
+        
+        // Prepare the request body
+        let requestBody: [String: Any] = [
+            "model": UserDefaults.standard.string(forKey: "selectedModel") ?? "grok-3",
+            "messages": messages,
+            "temperature": UserDefaults.standard.double(forKey: "temperature"),
+            "max_tokens": UserDefaults.standard.integer(forKey: "maxTokens"),
+            "stream": true
+        ]
+        
         request.httpBody = try JSONSerialization.data(withJSONObject: requestBody)
+        
+        // Start the request
+        running = true
+        isThinking = true
+        let startTime = Date()
         
         do {
             let (data, response) = try await URLSession.shared.data(for: request)
@@ -636,16 +114,22 @@ class RunLLM: ObservableObject {
                 throw RunLLMError.networkError("Invalid response")
             }
             
-            guard httpResponse.statusCode == 200 else {
-                throw RunLLMError.apiError("API returned status code \(httpResponse.statusCode)")
+            if httpResponse.statusCode == 401 {
+                throw RunLLMError.authenticationError("Invalid API key")
             }
             
-            let responseDict = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-            let content = responseDict?["content"] as? String ?? ""
+            if httpResponse.statusCode != 200 {
+                throw RunLLMError.apiError("API request failed with status code \(httpResponse.statusCode)")
+            }
             
-            thinkingTime = Date().timeIntervalSince(startTime!)
-            running = false
+            guard let responseDict = try JSONSerialization.jsonObject(with: data) as? [String: Any],
+                  let content = responseDict["content"] as? String else {
+                throw RunLLMError.apiError("Invalid response format")
+            }
+            
+            thinkingTime = Date().timeIntervalSince(startTime)
             isThinking = false
+            running = false
             
             return content
             
@@ -656,40 +140,11 @@ class RunLLM: ObservableObject {
         }
     }
     
-    /// Stops the current generation
+    /// Stops the current generation task
     func stop() {
         generationTask?.cancel()
+        cancelled = true
         running = false
         isThinking = false
-        cancelled = true
-    }
-}
-
-extension RunLLM.LoadState {
-    var isLoading: Bool {
-        switch self {
-        case .loading, .downloading:
-            return true
-        default:
-            return false
-        }
-    }
-    
-    var isLoaded: Bool {
-        switch self {
-        case .loaded:
-            return true
-        default:
-            return false
-        }
-    }
-    
-    var isDownloading: Bool {
-        switch self {
-        case .downloading:
-            return true
-        default:
-            return false
-        }
     }
 }
