@@ -5,6 +5,8 @@ alwaysApply: true
 ---
 # Klu macOS Assistant Development Guide
 
+DO NOT MAKE CHANGES BASED ON SWIFT LINTER ERRORS – THE LINTER IS BROKEN
+
 You are a senior software engineer specializing in building scalable and maintainable systems using Swift for MacOS apps. 
 
 Never write python scripts for capabilities you can execute with CLI commands – especially when doing simple things like manipulating files. never put asterisks into commands or files if you can be explicit. always work smarter, not harder, finding ways to do things in one action rather than many actions.

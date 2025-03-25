@@ -27,24 +27,19 @@ import SwiftUI
 import AppKit
 import SwiftData
 
+@MainActor
 /// A SwiftUI view that defines the content of the MenuBarExtra.
 /// Provides quick access buttons for opening the assistant, settings, and quitting the app.
 struct MenuBarContentView: View {
     /// Reference to the WindowManager to control the main window
     @EnvironmentObject var windowManager: WindowManager
-    @Environment(\.modelContext) private var modelContext
+    @Environment(\.modelContext) var modelContext
     
     var body: some View {
         Button("Open Assistant") {
             if let win = windowManager.mainWindow {
                 windowManager.updateMainWindow(win)
             }
-        }
-        Button("Open Floating Chat") {
-            openFloatingChat()
-        }
-        Button("Open Audio Transcription") {
-            openAudioTranscription()
         }
         Divider()
         SettingsLink {
@@ -55,36 +50,6 @@ struct MenuBarContentView: View {
         Button("Quit") {
             NSApplication.shared.terminate(nil)
         }
-    }
-    
-    func openFloatingChat() {
-        if let floatingWindow = NSApp.windows.first(where: { $0.title == "Floating Chat" }) {
-            floatingWindow.makeKeyAndOrderFront(nil)
-        } else {
-            let floatingChatView = FloatingChatWindow(modelContext: modelContext)
-            let hostingController = NSHostingController(rootView: floatingChatView)
-            let window = NSWindow(contentViewController: hostingController)
-            window.title = "Floating Chat"
-            window.setContentSize(NSSize(width: 400, height: 500))
-            window.styleMask = [.titled, .closable, .miniaturizable, .resizable]
-            window.level = .floating
-            window.makeKeyAndOrderFront(nil)
-        }
-    }
-    
-    /// Opens a new window containing the AudioTranscriptionView
-    func openAudioTranscription() {
-        if let existingWindow = NSApp.windows.first(where: { $0.title == "Audio Transcription" }) {
-            existingWindow.makeKeyAndOrderFront(nil)
-            return
-        }
-        let view = AudioTranscriptionView()
-        let hostingController = NSHostingController(rootView: view)
-        let window = NSWindow(contentViewController: hostingController)
-        window.title = "Audio Transcription"
-        window.setContentSize(NSSize(width: 600, height: 400))
-        window.styleMask = [.titled, .closable, .miniaturizable, .resizable]
-        window.makeKeyAndOrderFront(nil)
     }
 }
 

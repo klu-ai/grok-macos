@@ -41,23 +41,20 @@ import AppKit         // Import AppKit for macOS-specific window management.
 /// The main entry point of the Grok Assistant macOS app.
 @main
 struct grokApp: App {
-    /// Integrates the custom AppDelegate for handling application-level events.
-    @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
+    /// Shared AppSettings instance for managing app-wide settings
+    @StateObject private var appSettings: AppSettings
     
-    /// A shared instance of WindowManager for managing window state.
-    @StateObject private var windowManager = WindowManager.shared
+    /// Shared RunLLM instance for managing AI model execution
+    @StateObject private var runLLM = RunLLM()
     
-    /// The onboarding manager to handle onboarding state
-    @StateObject private var onboardingManager = OnboardingManager.shared
+    /// Shared OnboardingManager instance for managing onboarding state
+    @StateObject private var onboardingManager = OnboardingManager()
     
-    /// Shared PermissionManager instance for centralized permission handling
-    @StateObject private var permissionManager = PermissionManager()
+    /// Shared WindowManager instance for managing window state
+    @StateObject private var windowManager = WindowManager()
     
-    /// The preferences manager to handle app-wide settings
-    @AppStorage("showInMenuBar") private var showInMenuBar = true
-
-    /// The app manager responsible for coordinating application-wide state and functionality
-    @StateObject var appSettings: AppSettings
+    /// The container for managing the app's persistent data
+    let container: ModelContainer
     
     /// The currently selected thread in the conversation
     @State var currentThread: Thread?
@@ -65,16 +62,9 @@ struct grokApp: App {
     /// Tracks whether the prompt input field is focused
     @FocusState var isPromptFocused: Bool
     
-    /// Shared model container for SwiftData using a defined schema.
-    /// This container is responsible for data persistence and management.
-    private let sharedModelContainer: ModelContainer
-    
-    /// Manages LLM response generation
-    @StateObject private var runLLM: RunLLM
-    
     /// The view model that manages the chat interface state, including sessions and current input.
     @StateObject private var viewModel: ChatViewModel
-
+    
     /// Holds a reference to the current NSWindow.
     @State private var window: NSWindow?
     
@@ -84,34 +74,24 @@ struct grokApp: App {
     // MARK: - Initialization
     /// Initializes the RunLLM, ChatViewModel, and sharedModelContainer instances with proper dependency injection.
     init() {
-        // Initialize sharedModelContainer
-        let schema = Schema([
-            Message.self,
-            Thread.self
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        // Configure the ModelContainer for SwiftData
         do {
-            self.sharedModelContainer = try ModelContainer(for: schema, configurations: [modelConfiguration])
+            container = try ModelContainer(for: Message.self)
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            fatalError("Failed to create ModelContainer for Message: \(error.localizedDescription)")
         }
         
-        // Create a PermissionManager instance first
-        let permissionManagerInstance = PermissionManager()
-        self._permissionManager = StateObject(wrappedValue: permissionManagerInstance)
-        
-        // Create an AppSettings instance with the permission manager
-        let appInstance = AppSettings(permissionManager: permissionManagerInstance)
-        self._appSettings = StateObject(wrappedValue: appInstance)
+        // Initialize AppSettings
+        self._appSettings = StateObject(wrappedValue: AppSettings())
         
         // Create runLLMInstance with AppManager reference
         let runLLMInstance = RunLLM()
-        runLLMInstance.appSettings = appInstance
+        runLLMInstance.appSettings = appSettings
         self._runLLM = StateObject(wrappedValue: runLLMInstance)
         
         // Extract modelContext as a local constant
-        let modelContext = sharedModelContainer.mainContext
-        self._viewModel = StateObject(wrappedValue: ChatViewModel(runLLM: runLLMInstance, modelContext: modelContext, appSettings: appInstance))
+        let modelContext = container.mainContext
+        self._viewModel = StateObject(wrappedValue: ChatViewModel(runLLM: runLLMInstance, modelContext: modelContext, appSettings: appSettings))
     }
     
     // MARK: - Scene Definition
@@ -121,15 +101,17 @@ struct grokApp: App {
         WindowGroup("Grok Assistant") {
             AssistantView(currentThread: $currentThread, viewModel: viewModel, runLLM: runLLM)
                 .environmentObject(appSettings)
-                .environmentObject(permissionManager)
-                .modelContainer(sharedModelContainer)
+                .environmentObject(runLLM)
+                .environmentObject(onboardingManager)
+                .environmentObject(windowManager)
+                .modelContainer(container)
                 .sheet(isPresented: .init(
                     get: { !onboardingManager.isOnboardingComplete },
                     set: { _ in }
                 )) {
                     Onboarding()
                     .environmentObject(runLLM)
-                    .environmentObject(permissionManager)
+                    .environmentObject(onboardingManager)
                     .environmentObject(appSettings)
                 }
         }
@@ -210,34 +192,27 @@ struct grokApp: App {
         }
         
         // Provide a MenuBarExtra (if enabled in AppStorage)
-        MenuBarExtra(isInserted: Binding(get: { showInMenuBar }, set: { newValue in
-            // We explicitly dispatch to the main queue to safely update showInMenuBar
-            DispatchQueue.main.async {
-                showInMenuBar = newValue
-            }
-        })) {
-            MenuBarContentView()
+        MenuBarExtra(isInserted: Binding(get: { true }, set: { _ in })) {
+            MenuBar()
+                .modelContainer(container)
+                .environmentObject(appSettings)
+                .environmentObject(runLLM)
+                .environmentObject(onboardingManager)
                 .environmentObject(windowManager)
         } label: {
-            // Load and resize the image using NSImage.
-            let image: NSImage = {
-                guard let img = NSImage(named: "MenuBarIcon") else { return NSImage() }
-                // Calculate desired width based on desired height (18 points)
-                let desiredHeight: CGFloat = 18
-                let ratio = img.size.width / img.size.height
-                img.size = CGSize(width: desiredHeight * ratio, height: desiredHeight)
-                return img
-            }()
-            Image(nsImage: image)
+            Image("MenuBarIcon")
+                .renderingMode(.template)
         }
-        .menuBarExtraStyle(.menu)
+        .menuBarExtraStyle(.window)
 
         // Define the settings scene using a custom PreferencesView.
         Settings {
             PreferencesView()
-            .environmentObject(appSettings)
-            .environmentObject(runLLM)
-            .environmentObject(permissionManager)
+                .modelContainer(container)
+                .environmentObject(appSettings)
+                .environmentObject(runLLM)
+                .environmentObject(onboardingManager)
+                .environmentObject(windowManager)
         }
     }
 }

@@ -35,23 +35,9 @@ import SwiftUI
 /// Conforms to `CaseIterable` and `Identifiable` to facilitate iteration and unique identification in SwiftUI lists.
 enum PreferenceSection: String, CaseIterable, Identifiable {
     case general = "General"
-    case permissions = "Permissions"
     case assistant = "Assistant"
-    //case notifications = "Notifications"
-    // case updates = "Updates"
     case models = "Models"
-    case hardware = "Hardware"
-    
-    
-    // TODO: Integration sections temporarily hidden - will be implemented later
-    /*
-    case connections = "Connections"
-    case browsing = "Browsing"
-    
-    case email = "Email"
-    case calendar = "Calendar"
-    case messages = "Messages"
-    */
+    case updates = "Updates"
     
     /// Unique identifier for each section.
     var id: String { rawValue }
@@ -60,15 +46,10 @@ enum PreferenceSection: String, CaseIterable, Identifiable {
     /// - Returns: A string representing the group name.
     var group: String {
         switch self {
-        case .general, .permissions, .assistant: //, .notifications, .updates
+        case .general, .assistant, .updates:
             return "General"
-        case .models, .hardware: //.connections
+        case .models:
             return "AI"
-        // TODO: Integration sections temporarily hidden - will be implemented later
-        /*
-        case .email, .calendar, .messages, .browsing:
-            return "Integrations"
-        */
         }
     }
     
@@ -77,52 +58,23 @@ enum PreferenceSection: String, CaseIterable, Identifiable {
     var systemImage: String {
         switch self {
         case .general: return "gear"
-        case .permissions: return "lock.shield"
         case .assistant: return "apple.intelligence"
-        
-        //  this exists, but there are no notification syet
-        // case .notifications: return "bell"
-        
-        // this view exists, but is not yet functional 
-        // case .updates: return "arrow.triangle.2.circlepath"
-        
         case .models: return "cpu"
-        case .hardware: return "memorychip"
-        
-        // TODO: Integration sections temporarily hidden - will be implemented later
-        /*
-        case .connections: return "network"
-        case .email: return "envelope"
-        case .calendar: return "calendar"
-        case .messages: return "message"
-        case .browsing: return "safari"
-        */
+        case .updates: return "arrow.triangle.2.circlepath"
         }
     }
     
     /// Returns the appropriate view for each preference section.
     /// - Parameters:
     ///   - runLLM: The RunLLM environment object for AI model management
-    ///   - permissionManager: The PermissionManager environment object for handling permissions
     /// - Returns: A view representing the section's content
     @ViewBuilder
-    func view(runLLM: RunLLM? = nil, permissionManager: PermissionManager? = nil) -> some View {
+    func view(runLLM: RunLLM? = nil) -> some View {
         switch self {
         case .general:
             GeneralPreferences()
-        case .permissions:
-            if let pm = permissionManager {
-                PermissionsPreferences()
-                    .environmentObject(pm)
-            } else {
-                PermissionsPreferences()
-            }
         case .assistant:
             AssistantPreferences()
-        // case .notifications:
-            // NotificationsPreferences()
-        // case .updates:
-            // UpdatesPreferences()
         case .models:
             if let llm = runLLM {
                 ModelsPreferences()
@@ -130,8 +82,8 @@ enum PreferenceSection: String, CaseIterable, Identifiable {
             } else {
                 ModelsPreferences()
             }
-        case .hardware:
-            HardwarePreferences()
+        case .updates:
+            UpdatesPreferences()
         }
     }
 } 

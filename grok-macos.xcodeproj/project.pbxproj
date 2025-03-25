@@ -76,7 +76,6 @@
 		3695FD3C2D919EF700FB7F00 /* FileTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3695FCAB2D919EF700FB7F00 /* FileTool.swift */; };
 		3695FD3D2D919EF700FB7F00 /* ThreadsSidebar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3695FCD62D919EF700FB7F00 /* ThreadsSidebar.swift */; };
 		3695FD3E2D919EF700FB7F00 /* PreferenceSection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3695FCBD2D919EF700FB7F00 /* PreferenceSection.swift */; };
-		3695FD3F2D919EF700FB7F00 /* FloatingChat.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3695FCD32D919EF700FB7F00 /* FloatingChat.swift */; };
 		3695FD402D919EF700FB7F00 /* Finished.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3695FCD82D919EF700FB7F00 /* Finished.swift */; };
 		3695FD412D919EF700FB7F00 /* AudioTool.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3695FCAA2D919EF700FB7F00 /* AudioTool.swift */; };
 		3695FD422D919EF700FB7F00 /* WhisperTranscriptionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3695FC9F2D919EF700FB7F00 /* WhisperTranscriptionManager.swift */; };
@@ -124,7 +123,6 @@
 		3695FCCE2D919EF700FB7F00 /* Original.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Original.png; sourceTree = "<group>"; };
 		3695FCD02D919EF700FB7F00 /* AudioTranscriptionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioTranscriptionView.swift; sourceTree = "<group>"; };
 		3695FCD22D919EF700FB7F00 /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
-		3695FCD32D919EF700FB7F00 /* FloatingChat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FloatingChat.swift; sourceTree = "<group>"; };
 		3695FCD42D919EF700FB7F00 /* MarkdownView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownView.swift; sourceTree = "<group>"; };
 		3695FCD52D919EF700FB7F00 /* MessageBubble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageBubble.swift; sourceTree = "<group>"; };
 		3695FCD62D919EF700FB7F00 /* ThreadsSidebar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadsSidebar.swift; sourceTree = "<group>"; };
@@ -336,7 +334,6 @@
 			isa = PBXGroup;
 			children = (
 				3695FCD22D919EF700FB7F00 /* Chat.swift */,
-				3695FCD32D919EF700FB7F00 /* FloatingChat.swift */,
 				3695FCD42D919EF700FB7F00 /* MarkdownView.swift */,
 				3695FCD52D919EF700FB7F00 /* MessageBubble.swift */,
 				3695FCD62D919EF700FB7F00 /* ThreadsSidebar.swift */,
@@ -578,7 +575,6 @@
 				3695FD3C2D919EF700FB7F00 /* FileTool.swift in Sources */,
 				3695FD3D2D919EF700FB7F00 /* ThreadsSidebar.swift in Sources */,
 				3695FD3E2D919EF700FB7F00 /* PreferenceSection.swift in Sources */,
-				3695FD3F2D919EF700FB7F00 /* FloatingChat.swift in Sources */,
 				3695FD402D919EF700FB7F00 /* Finished.swift in Sources */,
 				3695FD412D919EF700FB7F00 /* AudioTool.swift in Sources */,
 				3695FD422D919EF700FB7F00 /* WhisperTranscriptionManager.swift in Sources */,

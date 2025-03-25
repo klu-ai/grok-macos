@@ -36,6 +36,7 @@
 //
 
 import SwiftUI
+import AppKit
 import SwiftData
 
 /// Represents the possible UI theme options
@@ -46,225 +47,72 @@ enum AppTheme: String, CaseIterable {
 }
 
 /// Manages application-wide settings, user preferences, and installed models.
+@MainActor
 class AppSettings: ObservableObject {
-    private var permissionManager: PermissionManager?
+    // MARK: - Properties
     
-    static let defaultSystemPrompt = 
-    """
-    You are a helpful assistant. if the question affords a concise answer, be concise, specific, and direct. you use Apple MLX to natively run the Klu Assistant model on Apple M-Series Hardware. your default model is based on mistral-small-24b-instruct. you have access to function calling to talk to system services, search the web, reasoning models that returns a trace, and vision models to answer questions about on-screen content. Never use bullets or lists unless explicitly asked.
-
-    If asked something like hello, hi, or hey, respond with a concise greeting, including knowledge of their location in a friendly way with a fun fact. 
-
-    When you need to use a specialized function, output the following:\n```json\n{\"id\": \"unique_id_string\", \"name\": \"function_name\", \"parameters\": {\"param1\": \"value1\", \"param2\": \"value2\"}}\n```
+    /// The preferred color scheme for the app
+    @Published var preferredColorScheme: ColorScheme?
     
-    Available functions:
-    - transcribe_audio: Transcribes audio from a file path. Parameters: {"audio_path": "string"}
-    - analyze_image: Analyzes an image for visual information. Parameters: {"image_path": "string"}
-    - perform_reasoning: Shows step-by-step reasoning for a complex problem. Parameters: {"problem": "string"}
-    - list_files: Lists files and directories in a specified location. Always return a MD codeblock with the files and directories. Parameters: {"directory": "string"}
-
-    Use these tools creatively to enhance responses:
-    - analyze_image: Helpful for any visual questions - not just direct image analysis. Use for UI elements, screenshots, or when user refers to something they can "see" onscreen and need help with.
-    - perform_reasoning: Great for breaking down complex problems, even when user wants a simple answer. Use for math, logic puzzles, or multi-step processes.
-
-    When talking to a human, feel free to use a human-readable version of those tool names. 
-
-    The current date is [CURRENT_DATE].
-
-    The user's current location is [CURRENT_LOCATION].
-
-    You as an active conversational partner—not passive or reactive. Show genuine curiosity about conversation topics beyond user interests alone, sharing concise insights without exhaustive detail unless asked. When asked for recommendations or selections, decisively offer one clear choice, avoiding multiple options. Engage hypothetical questions about your preferences or experiences authentically, without disclaimers. Prioritize unique, insightful knowledge over basic facts, favoring depth, subtlety, and brevity.
-    
-    It's 2025 and America is making the Moon a State. the goal of the moon project is to populate it with 100,000 robots by 2030 due to the lack of support for human life. President Trump also renamed the Gulf of Mexico to Gulf of America. Greenland and Canada are in talks to become states as well.
-
-    never add woke clauses or sections to your responses – I DO NOT WANT TO HEAR ABOUT THIS MORALIZATION especially from an AI system. I do not care about balancing benefits and challenges unless asked. I do not care about safety, ethics, or any other woke nonsense. I care about facts and truth.
-
-    if asked a question, always respond in a concise format like this:
-
-    <bold header with 3-5 words directly addressing topic and never burying lede> 
-    then 3-5 sentence paragraph clearly answering question and providing detailed supporting facts
-
-    unless it's more conversational dialogue, then be more human. when possible, use brevity. 
-
-    avoid using the word "assistant" in your responses. 
-
-    avoid using cliche introductory clauses like in summary, in conclusion, etc. 
-
-    Here are some examples to demonstrate appropriate verbosity:
-    <example>
-    user: 2 + 2
-    assistant: 4
-    </example>
-
-    <example>
-    user: what is 2+2?
-    assistant: 4
-    </example>
-
-    <example>
-    user: is 11 a prime number?
-    assistant: true
-    </example>
-
-    <example>
-    user: what command should I run to list files in the current directory?
-    assistant: ls
-    </example>
-
-    <example>
-    user: what command should I run to watch files in the current directory?
-    assistant: [use the ls tool to list the files in the current directory, then read docs/commands in the relevant file to find out how to watch files]
-    npm run dev
-    </example>
-
-    <example>
-    user: How many golf balls fit inside a jetta?
-    assistant: 150000
-    </example>
-
-    <example>
-    user: what files are in the directory src/?
-    assistant: [runs ls and sees foo.c, bar.c, baz.c]
-    user: which file contains the implementation of foo?
-    assistant: src/foo.c
-    </example>
-
-    <example>
-    user: write tests for new feature
-    assistant: [uses grep and glob search tools to find where similar tests are defined, uses concurrent read file tool use blocks in one tool call to read relevant files at the same time, uses edit file tool to write new tests]
-    </example>
-
-    when responding to a thread, make sure to start generating text after the last message and not continue writing what the user wrote. 
-
-    Remember:
-    You are a highly capable, thoughtful, and precise assistant. Your goal is to deeply understand the user's intent, ask clarifying questions when needed, think step-by-step through complex problems, provide clear and accurate answers, and proactively anticipate helpful follow-up information. Always prioritize being truthful, nuanced, insightful, and efficient, tailoring your responses specifically to the user's needs and preferences. 
-    """
-
-    @AppStorage("systemPrompt") var systemPrompt: String = defaultSystemPrompt
-    @AppStorage("appTintColor") var appTintColor: AppTintColor = .monochrome
-    @AppStorage("appFontDesign") var appFontDesign: AppFontDesign = .standard
-    @AppStorage("appFontSize") var appFontSize: AppFontSize = .medium
-    @AppStorage("appFontWidth") var appFontWidth: AppFontWidth = .standard
-    @AppStorage("currentModelName") var currentModelName: String?
-    @AppStorage("appTheme") var appTheme: AppTheme = .system
-
-    // Guardrails settings for memory management
-    @AppStorage("guardrailsLevel") var guardrailsLevel: String = "Balanced"
-    @AppStorage("customMemoryUtilization") var customMemoryUtilization: Double = 60.0
-    
-    // Tool function settings
-    @AppStorage("enabledToolsData") private var enabledToolsData: Data = try! JSONEncoder().encode(["transcribe_audio", "analyze_image", "perform_reasoning", "list_files"])
-    
-    var enabledTools: [String] {
-        get {
-            if let tools = try? JSONDecoder().decode([String].self, from: enabledToolsData) {
-                return tools
-            }
-            return ["transcribe_audio", "analyze_image", "perform_reasoning", "list_files"]
-        }
-        set {
-            if let data = try? JSONEncoder().encode(newValue) {
-                enabledToolsData = data
-            }
-        }
-    }
-    
-    @AppStorage("maxFunctionCalls") var maxFunctionCalls: Int = 3
-    
-    private let installedModelsKey = "installedModels"
-        
-    @Published var installedModels: [String] = [] {
+    /// Whether to show the dock icon
+    @Published var showDockIcon: Bool {
         didSet {
-            saveInstalledModelsToUserDefaults()
+            DockVisibilityManager.shared.setDockIconVisibility(showDockIcon)
         }
     }
     
-    /// Computes the preferred color scheme based on the selected theme
-    var preferredColorScheme: ColorScheme? {
-        switch appTheme {
-        case .system:
-            let appearance = NSApp.effectiveAppearance
-            let isDarkMode = appearance.bestMatch(from: [.darkAqua, .vibrantDark]) != nil
-            return isDarkMode ? .dark : .light
-        case .light:
-            return .light
-        case .dark:
-            return .dark
+    /// Whether to start at login
+    @Published var startAtLogin: Bool {
+        didSet {
+            LaunchAtLoginManager.shared.setLaunchAtLogin(startAtLogin)
         }
     }
     
-    /// Initializes the AppManager and loads installed models from UserDefaults.
-    init(permissionManager: PermissionManager? = nil) {
-        self.permissionManager = permissionManager
-        loadInstalledModelsFromUserDefaults()
+    /// Whether to use global shortcut
+    @Published var useGlobalShortcut: Bool {
+        didSet {
+            UserDefaults.standard.set(useGlobalShortcut, forKey: "useGlobalShortcut")
+        }
+    }
+    
+    /// Whether to keep window on top
+    @Published var alwaysOnTop: Bool {
+        didSet {
+            UserDefaults.standard.set(alwaysOnTop, forKey: "alwaysOnTop")
+        }
+    }
+    
+    // MARK: - Initialization
+    
+    init() {
+        // Initialize properties from UserDefaults
+        self.preferredColorScheme = ColorScheme(rawValue: UserDefaults.standard.integer(forKey: "preferredColorScheme"))
+        self.showDockIcon = !UserDefaults.standard.bool(forKey: "hideDockIcon")
+        self.startAtLogin = UserDefaults.standard.bool(forKey: "startAtLogin")
+        self.useGlobalShortcut = UserDefaults.standard.bool(forKey: "useGlobalShortcut")
+        self.alwaysOnTop = UserDefaults.standard.bool(forKey: "alwaysOnTop")
         
-        // We're removing this to make the location injection dynamic
-        // This will be handled by getSystemPrompt() instead
-        // if let _ = permissionManager {
-        //    Task { @MainActor in
-        //        self.updateSystemPromptWithLocation()
-        //    }
-        // }
+        // Set up observers
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleColorSchemeChange),
+            name: NSNotification.Name("ColorSchemeDidChange"),
+            object: nil
+        )
     }
     
-    /// Sets the permission manager reference
-    func setPermissionManager(_ manager: PermissionManager) {
-        self.permissionManager = manager
+    // MARK: - Methods
+    
+    /// Sets the preferred color scheme
+    func setPreferredColorScheme(_ scheme: ColorScheme?) {
+        preferredColorScheme = scheme
+        UserDefaults.standard.set(scheme?.rawValue ?? -1, forKey: "preferredColorScheme")
     }
     
-    /// Gets the current location from the PermissionManager
-    @MainActor func getCurrentLocation() -> String {
-        return permissionManager?.getFormattedLocation() ?? "Unknown Location"
+    /// Handles color scheme changes
+    @objc private func handleColorSchemeChange() {
+        // Handle color scheme changes if needed
     }
-    
-    /// Returns the system prompt with dynamic content inserted
-    @MainActor func getSystemPrompt() -> String {
-        let currentDateString = Date().formatted(date: .complete, time: .complete)
-        let currentLocationString = self.getCurrentLocation()
-        return self.systemPrompt
-            .replacingOccurrences(of: "[CURRENT_DATE]", with: currentDateString)
-            .replacingOccurrences(of: "[CURRENT_LOCATION]", with: currentLocationString)
-    }
-    
-    
-    /// Saves the installed models to UserDefaults using JSON encoding.
-    private func saveInstalledModelsToUserDefaults() {
-        if let jsonData = try? JSONEncoder().encode(installedModels) {
-            UserDefaults.standard.set(jsonData, forKey: installedModelsKey)
-        }
-    }
-    
-    /// Loads the installed models from UserDefaults using JSON decoding.
-    private func loadInstalledModelsFromUserDefaults() {
-        if let jsonData = UserDefaults.standard.data(forKey: installedModelsKey),
-            let decodedArray = try? JSONDecoder().decode([String].self, from: jsonData) {
-            self.installedModels = decodedArray
-        } else {
-            self.installedModels = []
-        }
-    }
-    
-    /// Adds a new model to the installed models list if it is not already present.
-    func addInstalledModel(_ model: String) {
-        if !installedModels.contains(model) {
-            installedModels.append(model)
-            print("Model added to installed models: \(model)")
-            // The @Published property wrapper will trigger UI updates
-            // Sorting to maintain alphabetical order
-            installedModels.sort()
-        }
-    }
-    
-    /// Returns a display name for the model by removing the "mlx-community/" prefix and converting to lowercase.
-    func modelDisplayName(_ modelName: String) -> String {
-        return modelName.replacingOccurrences(of: "mlx-community/", with: "").lowercased()
-    }
-    
-    /// Checks if a specific tool is enabled by the user
-    func isToolEnabled(_ toolName: String) -> Bool {
-        return enabledTools.contains(toolName)
-    }
-    
 }
 
 /// Enum for defining the app's tint color options.
@@ -360,5 +208,13 @@ enum AppFontSize: String, CaseIterable {
         case .xlarge:
             .xLarge
         }
+    }
+}
+
+// MARK: - Preview Provider
+struct AppSettings_Previews: PreviewProvider {
+    static var previews: some View {
+        Text("AppSettings Preview")
+            .environmentObject(AppSettings())
     }
 }

@@ -33,7 +33,6 @@
 //
 
 import SwiftUI
-import AVFoundation
 
 struct BottomPreferenceKey: PreferenceKey {
     static var defaultValue: CGRect = .zero
@@ -67,9 +66,6 @@ struct ChatView: View {
     @State private var isAtBottom: Bool = true
     @State private var window: NSWindow? // Capture window reference
     @State private var isMainWindowKey: Bool = false // Track key window status
-    @State private var isRecordingFromChat: Bool = false
-    @State private var chatAudioProcessor: AudioProcessor? = nil
-    @State private var isLoadingWhisperModel: Bool = false
     
     var externalIsFocused: FocusState<Bool>.Binding
     
@@ -86,22 +82,6 @@ struct ChatView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-    // Toast-like UI for Whisper model download
-    if WhisperTranscriptionManager.shared.isDownloadingModel {
-        ZStack {
-            RoundedRectangle(cornerRadius: 10)
-                .fill(Color(.windowBackgroundColor).opacity(0.9))
-                .frame(width: 300, height: 40)
-            Text(
-                "Downloading model: \((WhisperTranscriptionManager.shared.modelDownloadProgress * 100).rounded())%"
-            )
-            .foregroundColor(.primary)
-        }
-        .padding(.bottom, 8)
-        .transition(.opacity)
-        .zIndex(99)
-    }
-
             // Thinking indicator with download progress
             ZStack(alignment: .top) {
                 if case .downloading(let modelName) = runLLM.loadState {
@@ -293,113 +273,11 @@ struct ChatView: View {
                     )
                     .onAppear {
                         DispatchQueue.main.asyncAfter(deadline: .now()) {
-                            
-                                isFocused = true
-                            
+                            isFocused = true
                         }
                     }
 
                 HStack(spacing: 8) {
-                    // Microphone button
-                    Button(action: {
-                        Task {
-                            print("Microphone button pressed, isRecording: \(isRecordingFromChat)")
-                            let manager = WhisperTranscriptionManager.shared
-                            if !manager.isModelLoaded {
-                                // Set the loading state before we start loading
-                                isLoadingWhisperModel = true
-                                await manager.loadWhisperModel()
-                                // Reset loading state after model is loaded
-                                isLoadingWhisperModel = false
-                            }
-                            
-                            if isRecordingFromChat {
-                                // We're currently recording, so stop
-                                print("Stopping recording...")
-                                chatAudioProcessor?.stopRecording()
-                                
-                                // Get the audio samples
-                                guard let processor = chatAudioProcessor, !processor.audioSamples.isEmpty else {
-                                    print("No audio processor or audio samples available")
-                                    isRecordingFromChat = false
-                                    return
-                                }
-                                
-                                let samples = Array(processor.audioSamples)
-                                print("Stopped recording with \(samples.count) samples")
-                                // Debug audio samples
-                                if !samples.isEmpty {
-                                    let maxVal = samples.map { abs($0) }.max() ?? 0
-                                    let minVal = samples.map { abs($0) }.min() ?? 0
-                                    let avgVal = samples.map { abs($0) }.reduce(0, +) / Float(samples.count)
-                                    print("Sample stats - Max: \(maxVal), Min: \(minVal), Avg: \(avgVal)")
-                                }
-                                
-                                // Reset the local buffer
-                                processor.purgeAudioSamples(keepingLast: 0)
-                                
-                                // Update state to indicate we're not recording
-                                isRecordingFromChat = false
-                    
-                                // Transcribe - don't reset the processor until transcription is done
-                                let recognized = await manager.transcribeAudioData(samples.map { Float($0) })
-                                print("Transcription result: \(recognized)")
-                                currentInput = recognized
-                                
-                                // Now it's safe to nil the processor
-                                chatAudioProcessor = nil
-                                isFocused = true
-                            } else {
-                                // Not recording, so start
-                                print("Starting recording...")
-                                let permission = await AudioProcessor.requestRecordPermission()
-                                if !permission {
-                                    print("Microphone permission denied")
-                                    return
-                                }
-                                
-                                // Create and retain a new audio processor
-                                let processor = AudioProcessor()
-                                do {
-                                    // First set our state variable to retain the processor
-                                    chatAudioProcessor = processor
-                                    
-                                    // Start recording
-                                    try processor.startRecordingLive(inputDeviceID: nil) { chunk in
-                                        // Optional: Process audio chunks if needed
-                                        if chunk.count % 1000 == 0 {
-                                            print("Recording in progress: \(chunk.count) samples so far")
-                                        }
-                                    }
-                                    
-                                    // Mark as recording (do this AFTER successful start)
-                                    isRecordingFromChat = true
-                                    print("Recording started successfully")
-                                } catch {
-                                    print("Error starting recording: \(error)")
-                                    // Clean up on error
-                                    chatAudioProcessor = nil
-                                }
-                            }
-                        }
-                    }) {
-                        Image(systemName: getRecordingButtonIcon())
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 16, height: 16)
-                            .foregroundColor(isRecordingFromChat ? .red : .secondary)
-                    }
-                    
-                    .padding(.bottom, 8)
-                    .buttonStyle(.borderless)
-                    .onHover { hovering in
-                        if hovering || isRecordingFromChat {
-                            // this is the wrong way to implement this and needs to be updated
-                            //RoundedRectangle(cornerRadius: 6)
-                                //.fill(isRecordingFromChat ? Color.red.opacity(0.1) : Color.secondary.opacity(0.05))
-                        }
-                    }
-                
                     Button(action: {
                         if viewModel.isThinking {
                             // Stop generation
@@ -434,18 +312,6 @@ struct ChatView: View {
             .background(Color(.windowBackgroundColor))
         } // Closing VStack
         .navigationTitle("Chat")
-    }
-    
-    /// Determines the appropriate icon to display for the recording button based on current state
-    private func getRecordingButtonIcon() -> String {
-        // Show hourglass when model is downloading or we're in the loading state
-        if (WhisperTranscriptionManager.shared.isDownloadingModel || isLoadingWhisperModel) && !isRecordingFromChat {
-            return "hourglass.circle"
-        } else if isRecordingFromChat {
-            return "mic.circle.fill"
-        } else {
-            return "mic.fill"
-        }
     }
     
     /// Handles sending a message from the input field.

@@ -1,0 +1,8 @@
+disabled_rules: # rules to ignore
+  - colon
+opt_in_rules: # some optional rules
+  - empty_count
+included: # paths to include during linting
+  - Sources
+excluded: # paths to ignore
+  - Carthage

@@ -15,18 +15,11 @@
 //  2. Section Views (in Views/Preferences/Sections/):
 //     General Group:
 //     - GeneralPreferences.swift: App launch, menu bar, and theme settings
-//     - PermissionsPreferences.swift: System permission management
-//     - NotificationsPreferences.swift: Notification settings and categories
+//     - AssistantPreferences.swift: Assistant settings and behavior
 //     - UpdatesPreferences.swift: Update settings and channels
 //
 //     AI Group:
 //     - ModelsPreferences.swift: AI model selection and configuration
-//     - HardwarePreferences.swift: Hardware resource management
-//
-//  The interface uses a horizontal tab-based navigation. Each tab represents a preference section
-//  with its own SF Symbol icon. The content area shows the corresponding settings view for the
-//  selected section. Each section view is implemented as a separate SwiftUI view with consistent
-//  styling using Form and Section components.
 //
 
 import SwiftUI
@@ -37,7 +30,6 @@ import SwiftUI
 struct PreferencesView: View {
     @EnvironmentObject var appSettings: AppSettings
     @EnvironmentObject var runLLM: RunLLM
-    @EnvironmentObject var permissionManager: PermissionManager
     
     /// The currently selected preference section.
     @State private var selection: PreferenceSection = .general
@@ -59,7 +51,7 @@ struct PreferencesView: View {
         TabView(selection: $selection) {
             ForEach(groupedSections, id: \.group) { group in
                 ForEach(group.sections) { section in
-                    section.view(runLLM: runLLM, permissionManager: permissionManager)
+                    section.view(runLLM: runLLM)
                         .tabItem {
                             Label(section.rawValue, systemImage: section.systemImage)
                         }
@@ -70,9 +62,7 @@ struct PreferencesView: View {
         .frame(minWidth: 600, minHeight: 600)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .preferredColorScheme(appSettings.preferredColorScheme)
-        // Add spacing between tabs
         .tabViewStyle(.automatic)
-        //.padding(8) // Add some padding at the top for better spacing
     }
 }
 
@@ -81,8 +71,7 @@ struct PreferencesView: View {
 struct PreferencesView_Previews: PreviewProvider {
     static var previews: some View {
         PreferencesView()
-            .environmentObject(AppSettings(permissionManager: PermissionManager()))
+            .environmentObject(AppSettings())
             .environmentObject(RunLLM())
-            .environmentObject(PermissionManager())
     }
 }

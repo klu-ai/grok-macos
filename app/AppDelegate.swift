@@ -10,13 +10,12 @@
 //
 //  Key responsibilities:
 //  - Manages app lifecycle events (launch, terminate, become active/inactive)
-//  - Handles system permission requests and tracking (screen recording, microphone, etc.)
+//  - Handles system permission requests and tracking (screen recording, etc.)
 //  - Maintains persistent settings via UserDefaults
 //  - Coordinates system-level integrations (menu bar, dock, etc.)
 //
 //  Dependencies:
 //  - AppKit: Core macOS UI framework
-//  - AVFoundation: Audio/Video capabilities
 //  - CoreLocation: Location services integration
 //  - EventKit: Calendar and reminder access
 //  - Contacts: Address book integration
@@ -54,10 +53,6 @@ public class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     
     @Published var hasScreenRecordingPermission: Bool = UserDefaults.standard.bool(forKey: "hasScreenRecordingPermission") {
         didSet { UserDefaults.standard.set(hasScreenRecordingPermission, forKey: "hasScreenRecordingPermission") }
-    }
-    
-    @Published var hasMicrophonePermission: Bool = UserDefaults.standard.bool(forKey: "hasMicrophonePermission") {
-        didSet { UserDefaults.standard.set(hasMicrophonePermission, forKey: "hasMicrophonePermission") }
     }
     
     @Published var hasCameraPermission: Bool = UserDefaults.standard.bool(forKey: "hasCameraPermission") {
@@ -159,7 +154,6 @@ public class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     private func checkAndRequestPermissions() {
         Task {
             await checkScreenRecordingPermission()
-            await checkMicrophonePermission()
             await checkCameraPermission()
             await checkSiriPermission()
             await checkFileAccessPermission()
@@ -176,20 +170,6 @@ public class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         let isAllowed = CGPreflightScreenCaptureAccess()
         // If not already allowed, attempt to request permission.
         hasScreenRecordingPermission = isAllowed || CGRequestScreenCaptureAccess()
-    }
-    
-    /// Checks and requests microphone access permission.
-    private func checkMicrophonePermission() async {
-        switch AVCaptureDevice.authorizationStatus(for: .audio) {
-        case .authorized:
-            hasMicrophonePermission = true
-            
-        case .notDetermined:
-            hasMicrophonePermission = await AVCaptureDevice.requestAccess(for: .audio)
-            
-        default:
-            hasMicrophonePermission = false
-        }
     }
     
     /// Checks and requests camera access permission.
@@ -323,7 +303,6 @@ public class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     /// Consolidates individual permission flags into an overall permission status.
     private func updatePermissionStatus() {
         hasAllPermissions = hasScreenRecordingPermission &&
-                            hasMicrophonePermission &&
                             hasCameraPermission &&
                             hasSiriPermission &&
                             hasFileAccessPermission &&
