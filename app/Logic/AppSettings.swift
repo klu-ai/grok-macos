@@ -36,6 +36,7 @@
 //
 
 import SwiftUI
+import AppKit
 import SwiftData
 
 /// Represents the possible UI theme options
@@ -46,6 +47,7 @@ enum AppTheme: String, CaseIterable {
 }
 
 /// Manages application-wide settings, user preferences, and installed models.
+//@MainActor
 class AppSettings: ObservableObject {
     
     static let defaultSystemPrompt =
