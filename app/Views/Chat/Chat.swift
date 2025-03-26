@@ -84,8 +84,8 @@ struct ChatView: View {
         VStack(spacing: 0) {
             // Thinking indicator with download progress
             ZStack(alignment: .top) {
-                if case .downloading(let modelName) = runLLM.loadState {
-                    Text("Downloading \(modelName): \(Int(runLLM.progress * 100))%")
+                if runLLM.running && runLLM.progress > 0 {
+                    Text("Downloading: \(Int(runLLM.progress * 100))%")
                         .foregroundColor(.secondary)
                         .padding(.vertical, 4)
                         .padding(.horizontal, 12)
@@ -93,8 +93,8 @@ struct ChatView: View {
                         .clipShape(RoundedRectangle(cornerRadius: 8))
                         .shadow(radius: 2)
                         .zIndex(1)
-                } else if case .loading(let modelName) = runLLM.loadState {
-                    Text("Loading \(modelName)")
+                } else if runLLM.running {
+                    Text("Processing...")
                         .foregroundColor(.secondary)
                         .padding(.vertical, 4)
                         .padding(.horizontal, 12)

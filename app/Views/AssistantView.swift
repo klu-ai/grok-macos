@@ -23,6 +23,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 /// The main view for the Grok Assistant, providing a split view interface for thread navigation and chat interaction.
 struct AssistantView: View {
@@ -37,9 +38,6 @@ struct AssistantView: View {
     
     /// Environment object for managing application-wide state and functionality.
     @EnvironmentObject var appSettings: AppSettings
-    
-    /// Environment object for managing permissions.
-    @EnvironmentObject var permissionManager: PermissionManager
     
     /// Focus state for managing the prompt input field focus.
     @FocusState var isPromptFocused: Bool
@@ -79,7 +77,6 @@ struct AssistantView: View {
                 )
                     .environmentObject(runLLM)
                     .environmentObject(appSettings)
-                    .environmentObject(permissionManager)
                     .frame(minWidth: 300, minHeight: 400)
             }
             .toolbar {
@@ -118,10 +115,15 @@ struct AssistantView: View {
 
 struct AssistantView_Previews: PreviewProvider {
     static var previews: some View {
-        AssistantView(currentThread: .constant(nil), viewModel: ChatViewModel())
-            .environmentObject(AppSettings())
-            .environmentObject(RunLLM())
-            .environmentObject(OnboardingManager())
-            .environmentObject(WindowManager())
+        let config = SwiftData.ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try! SwiftData.ModelContainer(for: Message.self, configurations: config)
+        let appSettings = AppSettings()
+        let runLLM = RunLLM()
+        let viewModel = ChatViewModel(runLLM: runLLM, modelContext: container.mainContext, appSettings: appSettings)
+        AssistantView(currentThread: .constant(nil), viewModel: viewModel, runLLM: runLLM)
+            .environmentObject(appSettings)
+            .environmentObject(OnboardingManager.shared)
+            .environmentObject(WindowManager.shared)
+            .modelContainer(container)
     }
 }
