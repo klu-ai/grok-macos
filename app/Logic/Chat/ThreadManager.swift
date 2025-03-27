@@ -87,22 +87,7 @@ class ThreadManager {
         }
     }
     
-    /// Fetches recent threads with an optional limit
-    /// - Parameter limit: Optional maximum number of threads to return
-    /// - Returns: Array of Thread instances sorted by timestamp in descending order
-    func recentThreads(limit: Int? = nil) -> [Thread] {
-        var descriptor = FetchDescriptor<Thread>(sortBy: [SortDescriptor(\.timestamp, order: .reverse)])
-        if let limit = limit {
-            descriptor.fetchLimit = limit
-        }
-        
-        do {
-            return try modelContext.fetch(descriptor)
-        } catch {
-            print("Failed to fetch recent threads: \(error)")
-            return []
-        }
-    }
+
     
     // MARK: - Message Operations
     
