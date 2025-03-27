@@ -71,24 +71,7 @@ struct grokApp: App {
     /// Environment variable to track the scene phase (active, inactive, background).
     @Environment(\.scenePhase) private var scenePhase
     
-    /// Creates a new thread and updates the app state without capturing self
-    static func createNewThreadAction(
-        viewModel: ChatViewModel,
-        currentThread: Binding<Thread?>,
-        isPromptFocused: FocusState<Bool>.Binding,
-        windowManager: WindowManager
-    ) {
-        let newThread = viewModel.createNewThread()
-        currentThread.wrappedValue = newThread
-        isPromptFocused.wrappedValue = true
-        
-        // Ensure window is brought to focus when creating a new chat
-        if let existingMainWindow = windowManager.mainWindow {
-            windowManager.updateMainWindow(existingMainWindow)
-        } else if let window = NSApp.windows.first(where: { $0.title.contains("Grok Assistant") }) {
-            windowManager.updateMainWindow(window)
-        }
-    }
+
     
     // MARK: - Initialization
     /// Initializes the RunLLM, ChatViewModel, and sharedModelContainer instances with proper dependency injection.
