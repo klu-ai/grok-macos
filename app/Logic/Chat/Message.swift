@@ -52,7 +52,7 @@ class Message {
     var generatingTime: TimeInterval?
     var messageType: MessageType = MessageType.text
 
-    var toolCallId: String?
+
     
     @Relationship(inverse: \Thread.messages) var thread: Thread?
     
@@ -65,7 +65,6 @@ class Message {
         self.thread = thread
         self.generatingTime = generatingTime
         self.messageType = messageType
-        self.toolCallId = toolCallId
     }
 }
 
