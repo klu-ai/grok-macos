@@ -75,21 +75,7 @@ public struct ModelConfiguration {
         )
     }
     
-    /// Gets a model configuration by name
-    /// - Parameter name: The name of the model to retrieve
-    /// - Returns: The corresponding ModelConfiguration if found, nil otherwise
-    public static func getModelByName(_ name: String) -> ModelConfiguration? {
-        // In a real implementation, this would fetch model configurations from a service
-        // For now, return a default configuration
-        return ModelConfiguration(
-            name: name,
-            type: .text,
-            parameters: [
-                "temperature": 0.7,
-                "max_tokens": 4096
-            ]
-        )
-    }
+
     
     /// Formats a message string for proper tokenization
     /// - Parameter message: The original message string
