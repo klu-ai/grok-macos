@@ -5,7 +5,7 @@
 //  Created by Stephen M. Walker II on 2/12/25.
 //
 //  Description:
-//  This file defines the main preferences interface for the Klu macOS assistant. The preferences system
+//  This file defines the main preferences interface for the Grok macOS assistant. The preferences system
 //  is organized into a hierarchical structure with the following components:
 //
 //  1. Core Components (in Views/Preferences/):
