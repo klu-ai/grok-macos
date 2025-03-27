@@ -59,8 +59,6 @@ struct AppPreferences: View {
     @AppStorage("autoCheckForUpdates") private var autoCheckForUpdates = true
     @AppStorage("useGlobalShortcut") private var useGlobalShortcut = true
     @AppStorage("alwaysOnTop") private var alwaysOnTop = false
-    @AppStorage("rememberWindowPosition") private var rememberWindowPosition = true
-    @AppStorage("defaultWindowSize") private var defaultWindowSize = "Medium"
     @AppStorage("newThreadOnLoad") private var newThreadOnLoad = true
     
     private let windowSizes = ["Small", "Medium", "Large", "Custom"]
