@@ -119,10 +119,5 @@ class DockVisibilityManager {
         return NSApp.activationPolicy() == .regular
     }
     
-    /// Attempts to force the dock to refresh its icon display
-    func refreshDockIcon() {
-        DispatchQueue.main.async {
-            NSApp.activate(ignoringOtherApps: true)
-        }
-    }
+
 }
