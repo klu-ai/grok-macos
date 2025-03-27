@@ -16,8 +16,18 @@
 		3632A3052D5B414D001B87E1 /* grok.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = grok.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		360BE9C62D95446200E2B23F /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 3632A3042D5B414D001B87E1 /* grok */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		360BE8362D92D29700E2B23F /* app */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = app; sourceTree = "<group>"; };
+		360BE8362D92D29700E2B23F /* app */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (360BE9C62D95446200E2B23F /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = app; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
