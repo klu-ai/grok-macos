@@ -36,7 +36,7 @@ struct UpdatesPreferences: View {
             Section() {
                 VStack(alignment: .leading) {
                     Toggle("Automatically check for updates", isOn: $autoCheckForUpdates)
-                    Text("Periodically check for new versions of Klu")
+                    Text("Periodically check for new versions of Grok")
                         .foregroundColor(.secondary)
                         .font(.caption)
                 }
@@ -51,7 +51,7 @@ struct UpdatesPreferences: View {
                                 Text("Weekly").tag("Weekly")
                                 Text("Monthly").tag("Monthly")
                             }
-                            Text("How often Klu should check for updates")
+                            Text("How often Grok should check for updates")
                                 .foregroundColor(.secondary)
                                 .font(.caption)
                         }
