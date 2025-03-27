@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # helper.bash
-# klu
+# grok
 # Created by Stephen M. Walker II on 2/18/25
 
 # Function to resize icons
