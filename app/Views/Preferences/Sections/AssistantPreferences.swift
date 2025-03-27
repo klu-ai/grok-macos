@@ -5,7 +5,7 @@
 //  Created by Claude AI on 3/11/2024.
 //
 //  Description:
-//  This file defines the AssistantPreferences view for the Klu macOS assistant.
+//  This file defines the AssistantPreferences view for the Grok macOS assistant.
 //  It provides an interface for users to customize the system prompt used by the AI assistant.
 //
 
@@ -34,8 +34,7 @@ struct AssistantPreferences: View {
                 
                 HStack(alignment: .top) {
                     VStack(alignment: .leading) {
-                        Text("• [CURRENT_DATE]").font(.caption)
-                        Text("• [CURRENT_LOCATION]").font(.caption)
+                        Text("Customize system prompt for Grok's personality").font(.caption)
                     }
                     .foregroundColor(.secondary)
                     
