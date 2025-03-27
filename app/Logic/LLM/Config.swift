@@ -76,15 +76,7 @@ public struct ModelConfiguration {
     }
     
 
-    
-    /// Formats a message string for proper tokenization
-    /// - Parameter message: The original message string
-    /// - Returns: The formatted message string
-    func formatForTokenizer(_ message: String) -> String {
-        return message
-            .replacingOccurrences(of: "<think>", with: "")
-            .replacingOccurrences(of: "</think>", with: "")
-    }
+   
 }
 
 // MARK: - Equatable Conformance
