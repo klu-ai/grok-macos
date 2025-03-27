@@ -27,11 +27,6 @@ struct AssistantPreferences: View {
                     .colorMultiply(.gray)
                     .scrollContentBackground(.hidden)
                 
-                Text("Use the following placeholders for dynamic values:")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .padding(.top, 4)
-                
                 HStack(alignment: .top) {
                     VStack(alignment: .leading) {
                         Text("Customize system prompt for Grok's personality").font(.caption)

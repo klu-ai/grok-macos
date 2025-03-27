@@ -36,7 +36,7 @@ import SwiftUI
 enum PreferenceSection: String, CaseIterable, Identifiable {
     case general = "General"
     case assistant = "Assistant"
-    case models = "Models"
+    case models = "Model"
     case updates = "Updates"
     
     /// Unique identifier for each section.
@@ -46,9 +46,9 @@ enum PreferenceSection: String, CaseIterable, Identifiable {
     /// - Returns: A string representing the group name.
     var group: String {
         switch self {
-        case .general, .assistant, .updates:
+        case .general:
             return "General"
-        case .models:
+        case .models, .assistant, .updates:
             return "AI"
         }
     }
@@ -76,12 +76,7 @@ enum PreferenceSection: String, CaseIterable, Identifiable {
         case .assistant:
             AssistantPreferences()
         case .models:
-            if let llm = runLLM {
-                ModelsPreferences()
-                    .environmentObject(llm)
-            } else {
-                ModelsPreferences()
-            }
+            ModelsPreferences()
         case .updates:
             UpdatesPreferences()
         }
