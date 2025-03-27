@@ -1,5 +1,5 @@
 //  WindowManager.swift
-//  klu
+//  Grok
 //  Created by Stephen M. Walker II on 2/12/25.
 //
 //  Description:
@@ -24,7 +24,7 @@
 //  Usage:
 //  - Retrieve the shared instance via WindowManager.shared.
 //  - Use updateMainWindow(_:) to manage the target NSWindow, ensuring it is visible and active.
-//  - Commonly used by the main app (e.g., in kluApp.swift) to maintain proper window focus and visibility.
+//  - Commonly used by the main app (e.g., in Main.swift) to maintain proper window focus and visibility.
 
 import SwiftUI
 import AppKit
