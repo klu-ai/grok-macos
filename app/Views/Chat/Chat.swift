@@ -251,7 +251,7 @@ struct ChatView: View {
             
             // Input area
             HStack(alignment: .bottom, spacing: 0) {
-                TextField("Message assistant...", text: $currentInput)
+                TextField("What do you want to know?", text: $currentInput)
                     .textFieldStyle(.plain)
                     .padding(.horizontal, 12)
                     .padding(.vertical, 8)
