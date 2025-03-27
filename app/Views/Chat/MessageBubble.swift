@@ -37,16 +37,12 @@ import SwiftUI
 import AppKit // Added for NSPasteboard clipboard functionality
 
 /// A SwiftUI view representing an individual message bubble in the chat interface.
-/// Now includes logic for handling <think> ... </think> content and tool calls with collapsible sections.
 struct MessageBubble: View {
     /// The message data to be displayed in the bubble.
     let message: Message
     
     /// Indicates if the message is currently being generated
     let isGenerating: Bool
-    
-    /// Tracks whether the reasoning content (if any) is collapsed.
-    @State private var isReasoningCollapsed = true
     
     /// Tracks whether the mouse is hovering over the assistant message bubble.
     @State private var isHovering = false
@@ -73,149 +69,123 @@ struct MessageBubble: View {
     
     // Standard message view for user/assistant messages
     private var standardMessageView: some View {
-        HStack(alignment: .top, spacing: 8) {
-            // Avatar or icon
-            if message.role == .assistant {
-                Image(systemName: "brain")
-                    .foregroundColor(.accentColor)
-                    .font(.title2)
-            } else {
-                Image(systemName: "person.circle.fill")
-                    .foregroundColor(.secondary)
-                    .font(.title2)
+        HStack(alignment: .bottom, spacing: 8) {
+            if message.role == .user {
+                Spacer(minLength: 60)
             }
             
-            // Message content
-            VStack(alignment: .leading, spacing: 4) {
-                // Message text
-                MarkdownView(text: message.content)
-                    .textSelection(.enabled)
-                
-                // Timestamp
-                if let timestamp = message.timestamp {
-                    Text(timestamp, style: .time)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+            if message.role == .user {
+                VStack(alignment: .trailing, spacing: 8) {
+                    MarkdownView(text: message.content)
+                    HStack {
+                        // Copy button for user msg
+                        ZStack {
+                            Color.clear
+                                .frame(width: 20, height: 20)
+                            Button(action: copyMessage) {
+                                Image(systemName: "square.on.square")
+                                    .foregroundColor(isPressed ? .secondary : (isButtonHovered ? .primary : .secondary))
+                            }
+                            .buttonStyle(BorderlessButtonStyle())
+                            .opacity(isHovering ? 1 : 0)
+                            .animation(.easeInOut(duration: 0.2), value: isHovering)
+                            .onHover { hovering in
+                                isButtonHovered = hovering
+                            }
+                            .simultaneousGesture(
+                                DragGesture(minimumDistance: 0)
+                                    .onChanged { _ in isPressed = true }
+                                    .onEnded { _ in isPressed = false }
+                            )
+                        }
+                        Text(message.timestamp.formatted(.dateTime.hour().minute()))
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                    }
                 }
-            }
-            
-            // Copy button for assistant messages
-            if message.role == .assistant {
-                Button(action: copyMessage) {
-                    Image(systemName: isPressed ? "checkmark" : "doc.on.doc")
-                        .foregroundColor(isButtonHovered ? .accentColor : .secondary)
-                        .font(.caption)
-                }
-                .buttonStyle(.plain)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(Color(.windowBackgroundColor).opacity(0.44))
+                .clipShape(RoundedRectangle(cornerRadius: 16))
                 .onHover { hovering in
-                    isButtonHovered = hovering
+                    isHovering = hovering
+                    if !hovering {
+                        isButtonHovered = false
+                    }
                 }
-                .onLongPressGesture(minimumDuration: 0.1, maximumDistance: 0) { pressing in
-                    isPressed = pressing
-                    if !pressing {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                            isPressed = false
+            } else {
+                VStack(alignment: .leading, spacing: 8) {
+                    // Assistant content
+                    if isGenerating && message.content.isEmpty {
+                        HStack(alignment: .center, spacing: 8) {
+                            ProgressView()
+                                .progressViewStyle(CircularProgressViewStyle())
+                            Text("thinking...")
+                                .italic()
+                                .foregroundStyle(.secondary)
+                        }
+                    } else {
+                        MarkdownView(text: message.content)
+                    }
+                    
+                    // Timestamp and copy button
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(message.timestamp.formatted(.dateTime.hour().minute()))
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                        
+                        // Copy button with fixed frame
+                        ZStack {
+                            // Empty transparent view with fixed size to reserve space
+                            Color.clear
+                                .frame(width: 20, height: 20)
+                            
+                            // The actual button
+                            Button(action: copyMessage) {
+                                Image(systemName: "square.on.square")
+                                    .foregroundColor(isPressed ? .secondary : (isButtonHovered ? .primary : .secondary))
+                            }
+                            .buttonStyle(BorderlessButtonStyle())
+                            // Only animate opacity, not position or size
+                            .opacity(isHovering ? 1 : 0)
+                            .animation(.easeInOut(duration: 0.2), value: isHovering)
+                            // Add hover detection for the button
+                            .onHover { hovering in
+                                isButtonHovered = hovering
+                            }
+                            // Add press state detection
+                            .simultaneousGesture(
+                                DragGesture(minimumDistance: 0)
+                                    .onChanged { _ in isPressed = true }
+                                    .onEnded { _ in isPressed = false }
+                            )
                         }
                     }
-                } perform: {}
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background(Color(.windowBackgroundColor).opacity(0.0))
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+                // Use a simpler hover detection without nested animations
+                .onHover { hovering in
+                    // Don't animate the hover state itself to reduce flickering
+                    isHovering = hovering
+                    // If not hovering, ensure button hover state is also cleared
+                    if !hovering {
+                        isButtonHovered = false
+                    }
+                }
+            }
+            
+            if message.role == .assistant {
+                Spacer(minLength: 60)
             }
         }
-        .padding(8)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(message.role == .assistant ? Color(.windowBackgroundColor) : Color.clear)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 12)
-                .stroke(Color(.separatorColor).opacity(0.3), lineWidth: message.role == .assistant ? 1 : 0)
-        )
     }
     
     private func copyMessage() {
         let pasteboard = NSPasteboard.general
         pasteboard.clearContents()
         pasteboard.setString(message.content, forType: .string)
-    }
-}
-
-/// A view for displaying tool call messages with expandable content
-struct ToolCallMessageView: View {
-    let message: Message
-    let toolName: String
-    let toolCallId: String?
-    
-    @State private var isExpanded = false
-    
-    init(message: Message, toolName: String, toolCallId: String? = nil) {
-        self.message = message
-        self.toolName = toolName
-        self.toolCallId = toolCallId
-    }
-    
-    var body: some View {
-        // Wrap in an HStack with Spacers to match the assistant message width
-        HStack {
-            VStack(alignment: .leading, spacing: 8) {
-                // Tool call header
-                HStack {
-                    Image(systemName: "terminal.fill")
-                        .foregroundColor(.secondary)
-                    if case .toolResult = message.messageType {
-                        Text("Tool result")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    } else {
-                        Text("Tool: \(toolName)")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                    }
-                    
-                    Spacer()
-                    
-                    Image(systemName: isExpanded ? "chevron.down" : "chevron.right")
-                        .foregroundColor(.secondary)
-                        .font(.system(size: 12))
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(Color(.windowBackgroundColor).opacity(0.3))
-                .cornerRadius(8)
-                .onTapGesture {
-                    withAnimation { 
-                        isExpanded.toggle() 
-                    }
-                }
-                
-                // Tool call content (expandable)
-                if isExpanded {
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Result:")
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                        
-                        Text(message.content)
-                            .font(.body)
-                            .padding(8)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(Color(.textBackgroundColor).opacity(0.2))
-                            .cornerRadius(6)
-                    }
-                    .padding(.horizontal, 12)
-                    .padding(.bottom, 8)
-                    .transition(.opacity.combined(with: .move(edge: .top)))
-                }
-            }
-            .padding(8)
-            .background(Color(.windowBackgroundColor).opacity(0.2))
-            .cornerRadius(12)
-            .overlay(
-                RoundedRectangle(cornerRadius: 12)
-                    .stroke(Color(.separatorColor).opacity(0.3), lineWidth: 1)
-            )
-            
-            // Add spacer at the end to match assistant message layout
-            Spacer(minLength: 60)
-        }
-        .padding(.horizontal, 16) // Match assistant message horizontal padding
     }
 }
