@@ -84,11 +84,12 @@ class ChatViewModel: ObservableObject {
         // Generate LLM response asynchronously
         Task {
             // Use appSettings instance to get system prompt
-            let systemPrompt = await MainActor.run {
-                appSettings.getSystemPrompt()
-            }
+            //let systemPrompt = await MainActor.run {
+              //  appSettings.getSystemPrompt()
+            //}
             
-            let result = await runLLM.generate(thread: thread, systemPrompt: systemPrompt)
+            //let result = await runLLM.generate(messages: thread, systemPrompt: systemPrompt)
+            let result = "Hello World from Grok. This is a test. This is a long message that should be wrapped in a collapsible section. "
             
             // Update UI on main thread in a single operation
             await MainActor.run {
